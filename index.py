@@ -22,7 +22,7 @@ def lambda_handler():
     print("Start request for FCX subset...")
     
     dcEvent = {
-        "subDir": "https://ghrc-fcx-viz-output.s3.amazonaws.com/subsets/subset1_12655/",
+        "subDir": "https://szg-ghrc-fcx-viz-output.s3.amazonaws.com/subsets/subset_test00/",
         "date": "2017-05-17",
         # "Start": "2017-05-17 05:52:55 UTC",
         # "End": "2017-05-17 06:00:02 UTC",
@@ -98,43 +98,44 @@ def lambda_handler():
     dt = (tend - tstart)
     if dt>timedelta(seconds=10):
         
-        #--make subDir and download script
+        # --make subDir and download script
 
         # 4. create the buckets, dirs, tmps needed for the script, in later time.
         # makesubDir(bucket2, subDir, scriptTMP)
     
-        # if('LMA' in dsets):
-        #     # do these in complete isolation
-        #     range, networks = stRangesLMA(fdate)
-        #     for network in networks:
-        #         filesLMA = LMAfiles(bucket0,fdate,tstart,tend,latRange,lonRange, network=network)
-        #         # if(filesLMA):
-        #             # copyToSubdir(filesLMA, subDir, bucket2, instr='LMA/')
-        #             # if(latRange=='-'): copyToSubdir(filesLMA, subDir, bucket2, instr='LMA/')
-        #             # else: moveToSubdir(filesLMA[0], subDir, bucket2)
-        
-        # if('LIS' in dsets):
-        #     range, networks = stRangesLMA(fdate)
-        #     filesLIS = LISfiles(bucket0,fdate,range,tstart,tend, Verb=False)
-        #     # if(filesLIS): copyToSubdir(filesLIS, subDir, bucket2,instr='LIS/')
+        if('LIS' in dsets):
+            range, networks = stRangesLMA(fdate)
+            filesLIS = LISfiles(bucket0,fdate,range,tstart,tend, Verb=False)
+            if(filesLIS): copyToSubdir(filesLIS, subDir, bucket2,instr='LIS/')
 
-        # if('GLM' in dsets):
-        #     filesGLM = GOESfiles(bucket0,fdate,tstart,tend,instr='GLM')
-        #     # if(filesGLM): copyToSubdir(filesGLM, subDir, bucket2, instr='GLM/')
+        if('GLM' in dsets):
+            filesGLM = GOESfiles(bucket0,fdate,tstart,tend,instr='GLM')
+            print(filesGLM)
+            if(filesGLM): copyToSubdir(filesGLM, subDir, bucket2, instr='GLM/')
 
-        # if('CRS' in dsets):
-        #     subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, bucket0, fdate)
-        #     # if(subfile): moveToSubdir(subfile, subDir, bucket2)
+        if('CRS' in dsets):
+            subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, bucket0, fdate)
+            if(subfile): moveToSubdir(subfile, subDir, bucket2)
         
-        # if('LIP' in dsets):
-        #     subfile = subsetLIP(tstart, tend, latRange, lonRange, fdate)
-        #     print('{} created for LIP subset'.format(subfile))
-        #     # if(subfile): moveToSubdir(subfile, subDir, bucket2)
+        if('LIP' in dsets):
+            subfile = subsetLIP(tstart, tend, latRange, lonRange, fdate)
+            print('{} created for LIP subset'.format(subfile))
+            if(subfile): moveToSubdir(subfile, subDir, bucket2)
             
         if('FEGS' in dsets):
             subfile = subsetFEGS(t0, tstart, tend, latRange, lonRange, fdate)
             # print('{} created for FEGS subset'.format(subfile))
-            # if(subfile): moveToSubdir(subfile, subDir, bucket2)
+            if(subfile): moveToSubdir(subfile, subDir, bucket2)
+
+        if('LMA' in dsets):
+            # do these in complete isolation
+            range, networks = stRangesLMA(fdate)
+            for network in networks:
+                filesLMA = LMAfiles(bucket0,fdate,tstart,tend,latRange,lonRange, network=network)
+                if(filesLMA):
+                    moveToSubdir(filesLMA[0], subDir, bucket2)
+                    # if(latRange=='-'): copyToSubdir(filesLMA, subDir, bucket2, instr='LMA/')
+                    # else: moveToSubdir(filesLMA[0], subDir, bucket2)
             
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")

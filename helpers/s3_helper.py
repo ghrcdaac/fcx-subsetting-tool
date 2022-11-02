@@ -67,6 +67,7 @@ def copyToSubdir(files, tempKey, desbucket, instr=''):
     srcbucket = bucket0 # bucket0 = fcx-raw-data
 
     for file in files:
+        print(file)
         fileKey = tempKey + instr + file.split('/')[-1]
         try:
             s3.Object(srcbucket, file).load()
