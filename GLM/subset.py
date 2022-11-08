@@ -1,5 +1,4 @@
 from datetime import datetime
-from tkinter import ALL
 from helpers.s3_helper import S3list
 
 def GOESfiles(srcbucket,fdate,tstart,tend,instr='GLM'):
