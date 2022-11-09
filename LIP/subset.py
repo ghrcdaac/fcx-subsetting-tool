@@ -43,7 +43,7 @@ def subsetLIP(tstart, tend, latRange, lonRange, fdate):
     tmpfile = None
     if(len(df)>0):
         tmpfile = tmpFile(file, tstart, tend, 'LIP')
-        tmpfile = "./data/subsets/" + tmpfile.split("/")[2] #TODO: remove later. only for local test
+        # tmpfile = "./data/subsets/" + tmpfile.split("/")[2] #TODO: remove later. only for local test
         df.reset_index(drop=True, inplace=True)
         df = df.drop('Time', 1)
         df.to_csv(tmpfile, index=False, header=False)

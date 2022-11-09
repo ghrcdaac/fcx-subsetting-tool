@@ -51,7 +51,7 @@ def subsetFEGS(t0, tstart, tend, latRange, lonRange, fdate):
     tmpfile = None
     if(len(DF)>0):
         tmpfile = tmpFile(file, tstart, tend, 'FEGS_Flash')
-        tmpfile = "./data/subsets/" + tmpfile.split("/")[2] #TODO: remove later. only for local test
+        # tmpfile = "./data/subsets/" + tmpfile.split("/")[2] #TODO: remove later. only for local test
         print(tmpfile)
         DF.reset_index(drop=True, inplace=True)
         DF = DF.drop('Time', 1)

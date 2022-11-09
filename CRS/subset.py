@@ -53,7 +53,7 @@ def subsetCRS(t0, tstart, tend, latRange, lonRange, s3bucket, fdate):
         tmpfile = None
         if(np.sum(index)>0):
             tmpfile = tmpFile(file, tstart, tend, 'CRS')
-            tmpfile = "./data/subsets/" + tmpfile.split("/")[2] #TODO: remove later. only for local test
+            # tmpfile = "./data/subsets/" + tmpfile.split("/")[2] #TODO: remove later. only for local test
             # print(tmpfile)
             subds = ds.isel(time = index)
             subds.to_netcdf(tmpfile)

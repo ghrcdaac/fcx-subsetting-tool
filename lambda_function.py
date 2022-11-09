@@ -17,7 +17,7 @@ from helpers.s3_helper import copyToSubdir, moveToSubdir
 #---download script template in "output" bucket (not raw data bucket)
 scriptTMP = 'subsets/download_template.py'
 
-def lambda_handler():
+def lambda_handler(event, context):
     # 1. formulate the data, from the input lambda event
     print("Start request for FCX subset...")
     
@@ -139,5 +139,3 @@ def lambda_handler():
             
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
-
-lambda_handler()
