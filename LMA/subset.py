@@ -64,7 +64,7 @@ def LMAfiles(srcbucket,fdate,tstart,tend,latRange,lonRange,network='OKLMA'):
     # tmpfile = tmpFile(file, tstart, tend, network).split('.')[0]+'.dat'
     tmpfile = tmpFile(file, tstart, tend, network)
 
-    tmpfile = "./data/subsets/" + tmpfile.split("/")[2] # TODO: remove later, only for local testing 
+    # tmpfile = "./data/subsets/" + tmpfile.split("/")[2] # TODO: remove later, only for local testing 
 
     #-------------------------
     #--keep original header (may take ~30s for a 10min subset of DF.to_string() and write(line))

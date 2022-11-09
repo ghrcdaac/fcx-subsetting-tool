@@ -103,29 +103,29 @@ def lambda_handler():
         # 4. create the buckets, dirs, tmps needed for the script, in later time.
         # makesubDir(bucket2, subDir, scriptTMP)
     
-        if('LIS' in dsets):
-            range, networks = stRangesLMA(fdate)
-            filesLIS = LISfiles(bucket0,fdate,range,tstart,tend, Verb=False)
-            if(filesLIS): copyToSubdir(filesLIS, subDir, bucket2,instr='LIS/')
+        # if('LIS' in dsets):
+        #     range, networks = stRangesLMA(fdate)
+        #     filesLIS = LISfiles(bucket0,fdate,range,tstart,tend, Verb=False)
+        #     if(filesLIS): copyToSubdir(filesLIS, subDir, bucket2,instr='LIS/')
 
         if('GLM' in dsets):
             filesGLM = GOESfiles(bucket0,fdate,tstart,tend,instr='GLM')
             print(filesGLM)
             if(filesGLM): copyToSubdir(filesGLM, subDir, bucket2, instr='GLM/')
 
-        if('CRS' in dsets):
-            subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, bucket0, fdate)
-            if(subfile): moveToSubdir(subfile, subDir, bucket2)
+        # if('CRS' in dsets):
+        #     subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, bucket0, fdate)
+        #     if(subfile): moveToSubdir(subfile, subDir, bucket2)
         
-        if('LIP' in dsets):
-            subfile = subsetLIP(tstart, tend, latRange, lonRange, fdate)
-            print('{} created for LIP subset'.format(subfile))
-            if(subfile): moveToSubdir(subfile, subDir, bucket2)
+        # if('LIP' in dsets):
+        #     subfile = subsetLIP(tstart, tend, latRange, lonRange, fdate)
+        #     print('{} created for LIP subset'.format(subfile))
+        #     if(subfile): moveToSubdir(subfile, subDir, bucket2)
             
-        if('FEGS' in dsets):
-            subfile = subsetFEGS(t0, tstart, tend, latRange, lonRange, fdate)
-            # print('{} created for FEGS subset'.format(subfile))
-            if(subfile): moveToSubdir(subfile, subDir, bucket2)
+        # if('FEGS' in dsets):
+        #     subfile = subsetFEGS(t0, tstart, tend, latRange, lonRange, fdate)
+        #     # print('{} created for FEGS subset'.format(subfile))
+        #     if(subfile): moveToSubdir(subfile, subDir, bucket2)
 
         if('LMA' in dsets):
             # do these in complete isolation
