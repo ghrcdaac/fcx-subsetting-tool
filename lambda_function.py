@@ -140,4 +140,4 @@ def lambda_handler(event, context):
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
 
-lambda_handler(1,2)
+# lambda_handler(1,2)
