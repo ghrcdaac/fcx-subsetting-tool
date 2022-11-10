@@ -3,7 +3,7 @@ import pandas as pd
 import io, gzip, os
 
 #---raw data bucket
-AWSregion= os.environ.get('AWS_REGION')
+AWSregion= os.environ.get('BUCKET_AWS_REGION')
 bucket0 = os.environ.get('SOURCE_BUCKET_NAME')
 
 client = boto3.client('s3', region_name=AWSregion)

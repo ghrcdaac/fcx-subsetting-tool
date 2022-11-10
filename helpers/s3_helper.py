@@ -6,7 +6,7 @@ from datetime import datetime
 
 # AWSregion= 'us-east-1'
 # bucket0 = 'fcx-raw-data'
-AWSregion= os.environ.get('AWS_REGION')
+AWSregion= os.environ.get('BUCKET_AWS_REGION')
 bucket0 = os.environ.get('SOURCE_BUCKET_NAME')
 
 #---initiate s3, both low level and high level APIs
