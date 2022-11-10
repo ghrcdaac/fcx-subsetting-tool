@@ -1,15 +1,19 @@
 import boto3, s3fs
+import os
 from datetime import datetime
 
 #---raw data bucket
-AWSregion= 'us-east-1'
-bucket0 = 'fcx-raw-data'
+
+# AWSregion= 'us-east-1'
+# bucket0 = 'fcx-raw-data'
+AWSregion= os.environ.get('AWS_REGION')
+bucket0 = os.environ.get('SOURCE_BUCKET_NAME')
 
 #---initiate s3, both low level and high level APIs
 s3 = boto3.resource('s3', region_name=AWSregion)
 client = boto3.client('s3', region_name=AWSregion)
 
-def S3list(srcbucket,fdate,instrm,network='OKLMA'):
+def S3list(date,instrm,network='OKLMA'):
     """
     get list of files in a s3 bucket for a specific fdate and instrument (prefix)
     fdate: e.g. '2017-05-17'
@@ -24,7 +28,7 @@ def S3list(srcbucket,fdate,instrm,network='OKLMA'):
             'LMA':'LMA/'+network+'/data/'+fdate+'/goesr_plt_'+network+'_'+fdate.replace('-',''),
             'LIP':'LIP/data/goesr_plt_lip_'+fdate.replace('-','')}
     
-
+    srcbucket = bucket0
     bucket = s3.Bucket(srcbucket)
     # print("S3list searching for ",prefix[instrm])
     

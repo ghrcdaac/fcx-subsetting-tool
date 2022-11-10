@@ -23,8 +23,7 @@ def subsetCRS(t0, tstart, tend, latRange, lonRange, s3bucket, fdate):
     Returns:
         _type_: string dir of subset file in tmp.
     """
-    bucket0 = 'fcx-raw-data'
-    file = S3list(bucket0,fdate,'CRS')[0]
+    file = S3list(fdate,'CRS')[0]
     fileObj = CRSaccess(file,s3bucket) # (only works if file was made NOT using hdf5/netcdf engine, i.e. scipy or default)
     #print(' Obtained CRS object')
     

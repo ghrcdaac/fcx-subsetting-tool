@@ -14,7 +14,7 @@ def GOESfiles(srcbucket,fdate,tstart,tend,instr='GLM'):
     The files are later copied from source bucket to our destination bucket.
     """
     
-    ALLfiles = S3list(srcbucket,fdate,instr)
+    ALLfiles = S3list(fdate,instr)
     # print('Files:',ALLfiles)
 
     files = []

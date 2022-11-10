@@ -14,7 +14,7 @@ def LMAfiles(srcbucket,fdate,tstart,tend,latRange,lonRange,network='OKLMA'):
     get LMA filename list within Trange [sec] starting from tstart on fdate
     Note that LMA files are every 10min/5min
     """
-    files = S3list(srcbucket,fdate,'LMA',network=network)
+    files = S3list(fdate,'LMA',network=network)
 
     if(len(files)==0): return []
     

@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from datetime import datetime as dt
 from helpers.s3_helper import S3list
 from helpers.fileIO import tmpFile
@@ -22,8 +23,8 @@ def subsetLIP(tstart, tend, latRange, lonRange, fdate):
     Returns:
         _type_: string dir of subset file in tmp.
     """    
-    bucket0 = 'fcx-raw-data'
-    file = S3list(bucket0,fdate,'LIP')[0]
+    bucket0 = os.environ.get('SOURCE_BUCKET_NAME')
+    file = S3list(fdate,'LIP')[0]
     s3path='s3://'+bucket0+'/'+file
     df=pd.read_csv(s3path, sep=",",header=None)
     df.columns = ['Date/Time', 'Ex', 'Ey', 'Ez', 'Eq', 

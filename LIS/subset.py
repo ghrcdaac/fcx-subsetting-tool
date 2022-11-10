@@ -13,7 +13,7 @@ def LISfiles(s3bucket,fdate, bigbox, tstart, tend, Verb=False):
     The files are later copied from source bucket to our destination bucket.
     """
     
-    filesALL = S3list(s3bucket,fdate,'LIS')
+    filesALL = S3list(fdate,'LIS')
     
     if len(filesALL)==0: return []
         
