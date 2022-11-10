@@ -9,7 +9,7 @@ from .helpers.LMA_getter import get_LMA
 # functions
 ###########################################
 
-def LMAfiles(srcbucket,fdate,tstart,tend,latRange,lonRange,network='OKLMA'):
+def LMAfiles(fdate,tstart,tend,latRange,lonRange,network='OKLMA'):
     """
     get LMA filename list within Trange [sec] starting from tstart on fdate
     Note that LMA files are every 10min/5min
@@ -42,7 +42,7 @@ def LMAfiles(srcbucket,fdate,tstart,tend,latRange,lonRange,network='OKLMA'):
     print(filesLMA)
     
     for file in filesLMA:
-        df, header = get_LMA(srcbucket,file,header)
+        df, header = get_LMA(file,header)
         DF = pd.concat([DF, df])
                 
     # # skipped lon lat subsetting for now.

@@ -4,7 +4,7 @@ from datetime import timedelta
 from helpers.s3_helper import S3list, readObject as CRSaccess
 from helpers.fileIO import tmpFile
 
-def subsetCRS(t0, tstart, tend, latRange, lonRange, s3bucket, fdate):
+def subsetCRS(t0, tstart, tend, latRange, lonRange, fdate):
     """
     Gets the original CRS file stored in s3.
     Generates the subsets and stores it inside a temp file.
@@ -24,7 +24,7 @@ def subsetCRS(t0, tstart, tend, latRange, lonRange, s3bucket, fdate):
         _type_: string dir of subset file in tmp.
     """
     file = S3list(fdate,'CRS')[0]
-    fileObj = CRSaccess(file,s3bucket) # (only works if file was made NOT using hdf5/netcdf engine, i.e. scipy or default)
+    fileObj = CRSaccess(file) # (only works if file was made NOT using hdf5/netcdf engine, i.e. scipy or default)
     #print(' Obtained CRS object')
     
     with xr.open_dataset(fileObj, decode_cf=False) as ds:

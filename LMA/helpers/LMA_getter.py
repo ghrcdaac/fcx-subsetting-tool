@@ -1,20 +1,22 @@
 import boto3
 import pandas as pd
-import io,gzip
+import io, gzip, os
 
 #---raw data bucket
-AWSregion= 'us-east-1'
+AWSregion= os.environ.get('AWS_REGION')
+bucket0 = os.environ.get('SOURCE_BUCKET_NAME')
 
 client = boto3.client('s3', region_name=AWSregion)
 s3 = boto3.resource('s3', region_name=AWSregion)
 
-def get_LMA(srcbucket,file,header=None):
+def get_LMA(file,header=None):
     """
     1. Read LMA data with header excluded
     2. reduce data amount by filtering out noise
     Note that
     nheader: header rows to skip (upon meeting w/ slabel)
     """
+    srcbucket = bucket0
     if(not header):
         header=get_LMAheader(srcbucket,file,slabel='*** data ***')
 

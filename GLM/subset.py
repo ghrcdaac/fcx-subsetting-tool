@@ -1,7 +1,7 @@
 from datetime import datetime
 from helpers.s3_helper import S3list
 
-def GOESfiles(srcbucket,fdate,tstart,tend,instr='GLM'):
+def GOESfiles(fdate,tstart,tend,instr='GLM'):
     """
     get GLM or ABI file list between tstart and tend
     Note that GOES-R M3/CONUS scan for ABI was about every 5min

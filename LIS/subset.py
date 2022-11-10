@@ -2,7 +2,7 @@ import numpy as np
 from helpers.s3_helper import S3list, s3FileObj
 from .helpers.checker import check_LIS
 
-def LISfiles(s3bucket,fdate, bigbox, tstart, tend, Verb=False):
+def LISfiles(fdate, bigbox, tstart, tend, Verb=False):
     """
     Get LIS filename list within range [sec] starting from start to end on fdate
     and within the bigbox domain.
@@ -29,7 +29,7 @@ def LISfiles(s3bucket,fdate, bigbox, tstart, tend, Verb=False):
     for file in files:
         if(Verb): print("Check on ",file)
 
-        fileobj = s3FileObj(s3bucket, file)
+        fileobj = s3FileObj(file)
         
         lat,lon,Time = check_LIS(fileobj, fdate)
         # if(len(lat)==0): continue

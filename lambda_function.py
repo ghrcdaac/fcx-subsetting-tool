@@ -11,7 +11,6 @@ from FEGS.subset import subsetFEGS
 
 from LMA.helpers.stRangesLMA import stRangesLMA
 
-bucket0 = 'fcx-raw-data'
 from helpers.s3_helper import copyToSubdir, moveToSubdir
 
 #---download script template in "output" bucket (not raw data bucket)
@@ -105,16 +104,16 @@ def lambda_handler(event, context):
     
         if('LIS' in dsets):
             range, networks = stRangesLMA(fdate)
-            filesLIS = LISfiles(bucket0,fdate,range,tstart,tend, Verb=False)
+            filesLIS = LISfiles(fdate,range,tstart,tend, Verb=False)
             if(filesLIS): copyToSubdir(filesLIS, subDir, bucket2,instr='LIS/')
 
         if('GLM' in dsets):
-            filesGLM = GOESfiles(bucket0,fdate,tstart,tend,instr='GLM')
+            filesGLM = GOESfiles(fdate,tstart,tend,instr='GLM')
             print(filesGLM)
             if(filesGLM): copyToSubdir(filesGLM, subDir, bucket2, instr='GLM/')
 
         if('CRS' in dsets):
-            subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, bucket0, fdate)
+            subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, fdate)
             if(subfile): moveToSubdir(subfile, subDir, bucket2)
         
         if('LIP' in dsets):
@@ -131,7 +130,7 @@ def lambda_handler(event, context):
             # do these in complete isolation
             range, networks = stRangesLMA(fdate)
             for network in networks:
-                filesLMA = LMAfiles(bucket0,fdate,tstart,tend,latRange,lonRange, network=network)
+                filesLMA = LMAfiles(fdate,tstart,tend,latRange,lonRange, network=network)
                 if(filesLMA):
                     moveToSubdir(filesLMA[0], subDir, bucket2)
                     # if(latRange=='-'): copyToSubdir(filesLMA, subDir, bucket2, instr='LMA/')

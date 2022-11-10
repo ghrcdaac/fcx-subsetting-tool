@@ -102,17 +102,18 @@ def makesubDir(desbucket, subDir,scriptTMP):
         
         print(subDir,' Dir created for current subset with download script ready\n')
 
-def s3FileObj(s3bucket,fname):
+def s3FileObj(fname):
     """
     Return S3 file object to be accessed using xarray or hdf5/netcdf4.
     """
+    s3bucket = bucket0
     file = s3bucket+'/'+fname
     fs = s3fs.S3FileSystem()  #(anon=False)
     fileObj = fs.open(file,'rb')
 
     return fileObj
 
-def readObject(fname, s3bucket):
+def readObject(fname):
     """    
     Access the object file (eg. CRS)
     reads the data
@@ -125,6 +126,7 @@ def readObject(fname, s3bucket):
     Returns:
         _type_: bytes
     """
+    s3bucket = bucket0
     fileobj = client.get_object(Bucket=s3bucket, Key=fname) 
     fileCRS = fileobj['Body'].read()
     return fileCRS
