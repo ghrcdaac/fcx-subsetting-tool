@@ -13,7 +13,7 @@ bucket0 = os.environ.get('SOURCE_BUCKET_NAME')
 s3 = boto3.resource('s3', region_name=AWSregion)
 client = boto3.client('s3', region_name=AWSregion)
 
-def S3list(date,instrm,network='OKLMA'):
+def S3list(fdate,instrm,network='OKLMA'):
     """
     get list of files in a s3 bucket for a specific fdate and instrument (prefix)
     fdate: e.g. '2017-05-17'
