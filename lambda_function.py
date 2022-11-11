@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import json
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -20,6 +21,9 @@ def lambda_handler(event, context):
     # 1. formulate the data, from the input lambda event
     print("Start request for FCX subset...")
     
+    # when invoked by another lambda function, payload is recieved in string.
+    if isinstance(event, str): event = json.loads(event)
+
     dcEvent = {
         "subDir": "https://szg-ghrc-fcx-viz-output.s3.amazonaws.com/subsets/subset_test00/",
         "date": "2017-05-17",
