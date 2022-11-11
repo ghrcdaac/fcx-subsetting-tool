@@ -68,6 +68,8 @@ def lambda_handler(event, context):
         ]
     }
     
+
+    if (event['body']): dcEvent = event['body']
     # print('dcEvent',dcEvent)
     
     subsetDir = dcEvent['subDir']
