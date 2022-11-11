@@ -3,7 +3,7 @@ import subprocess
 SUBSETTING_TYPES = ['CRS', 'FEGS', 'GLM', 'LIP', 'LIS', 'LMA']
 
 def execsc(command):
-    subprocess.Popen(f"{command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    return subprocess.Popen(f"{command}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 # create a dist dir. Inside the dist dir.
 execsc("mkdir ./dist")
@@ -19,5 +19,5 @@ for subsetting_type in SUBSETTING_TYPES:
     execsc(f"cp ./lambda_function.py ./dist/{newDir}")
     # also copy the zip to the new dir.
     execsc(f"cp ./create_zip.sh ./dist/{newDir}")
-    # then create a zip for hte subsetting type
-    execsc(f"bash ./dist/{newDir}/create_zip.sh {subsetting_type}")
+
+print("DONE")

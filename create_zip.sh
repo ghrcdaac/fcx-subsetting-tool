@@ -1,2 +1,1 @@
-mkdir ./dist
-zip -r ./dist/$1.zip . -x "*.git*"
+zip -r ../$1.zip . -x "*.git*"
