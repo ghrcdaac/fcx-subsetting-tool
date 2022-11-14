@@ -1,1 +1,0 @@
-zip -r ../subsetting.zip . -x "*.git*"

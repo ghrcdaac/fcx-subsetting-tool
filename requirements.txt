@@ -1,0 +1,7 @@
+numpy
+pandas
+xarray
+scipy
+netCDF4
+boto3
+s3fs
