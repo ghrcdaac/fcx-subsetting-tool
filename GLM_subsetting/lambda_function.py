@@ -3,16 +3,8 @@ import json
 import warnings
 warnings.filterwarnings("ignore")
 
-from LMA.subset import LMAfiles
-from LIS.subset import LISfiles
 from GLM.subset import GOESfiles
-from CRS.subset import subsetCRS
-from LIP.subset import subsetLIP
-from FEGS.subset import subsetFEGS
-
-from LMA.helpers.stRangesLMA import stRangesLMA
-
-from helpers.s3_helper import copyToSubdir, moveToSubdir
+from helpers.s3_helper import copyToSubdir
 
 #---download script template in "output" bucket (not raw data bucket)
 scriptTMP = 'subsets/download_template.py'
@@ -103,46 +95,15 @@ def lambda_handler(event, context):
     t0 = datetime.strptime(fdate,'%Y-%m-%d')
     dt = (tend - tstart)
     if dt>timedelta(seconds=10):
-        
         # --make subDir and download script
 
         # 4. create the buckets, dirs, tmps needed for the script, in later time.
         # makesubDir(destinationBucket, subDir, scriptTMP)
-    
-        if('LIS' in dsets):
-            range, networks = stRangesLMA(fdate)
-            filesLIS = LISfiles(fdate,range,tstart,tend, Verb=False)
-            if(filesLIS): copyToSubdir(filesLIS, subDir, destinationBucket, instr='LIS/')
 
         if('GLM' in dsets):
             filesGLM = GOESfiles(fdate,tstart,tend,instr='GLM')
             print(filesGLM)
             if(filesGLM): copyToSubdir(filesGLM, subDir, destinationBucket, instr='GLM/')
-
-        if('CRS' in dsets):
-            subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, fdate)
-            if(subfile): moveToSubdir(subfile, subDir, destinationBucket)
-        
-        if('LIP' in dsets):
-            subfile = subsetLIP(tstart, tend, latRange, lonRange, fdate)
-            print('{} created for LIP subset'.format(subfile))
-            if(subfile): moveToSubdir(subfile, subDir, destinationBucket)
-            
-        if('FEGS' in dsets):
-            subfile = subsetFEGS(t0, tstart, tend, latRange, lonRange, fdate)
-            # print('{} created for FEGS subset'.format(subfile))
-            if(subfile): moveToSubdir(subfile, subDir, destinationBucket)
-
-        if('LMA' in dsets):
-            # do these in complete isolation
-            range, networks = stRangesLMA(fdate)
-            for network in networks:
-                filesLMA = LMAfiles(fdate,tstart,tend,latRange,lonRange, network=network)
-                if(filesLMA):
-                    moveToSubdir(filesLMA[0], subDir, destinationBucket)
-                    # if(latRange=='-'): copyToSubdir(filesLMA, subDir, destinationBucket, instr='LMA/')
-                    # else: moveToSubdir(filesLMA[0], subDir, destinationBucket)
-            
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
 
