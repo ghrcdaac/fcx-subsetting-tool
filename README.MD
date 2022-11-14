@@ -14,8 +14,12 @@
    - `SOURCE_BUCKET_NAME`
 8. Also, Each of the code (except trigger_subsetting), needs permission to read and write to S3.
    - Either create your own permission, Or add `sanjog-subsetting-fcx-role-ikmiflyf` permission to each lambda.
-9. The `trigger_subsetting` should have an API gate way as an trigger, so add one.
-10. For the expected POST API call, refer. postman collection attached `subsetting_postman`.
+9. And, For each of the lambda function (except trigger_subsetting), change their general setting. i.e. Example configuration:
+   - Memory: 1024MB 
+   - Ephemeral storage: 5120MB
+   - Timeout: 10min
+10. The `trigger_subsetting` should have an API gate way as an trigger, so add one.
+11. For the expected POST API call, refer. postman collection attached `subsetting_postman`.
 
 
 ## To test the subsetting in lambda
