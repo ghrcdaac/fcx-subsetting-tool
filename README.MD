@@ -18,7 +18,8 @@
    - Memory: 1024MB 
    - Ephemeral storage: 5120MB
    - Timeout: 10min
-10. The `trigger_subsetting` should have an API gate way as an trigger, so add one.
+10. The `trigger_subsetting` should have an API gateway as an trigger, so add one.
+   - In the API gateway console, Allow CORS for resource, and re-deploy the API gateway.
 11. For the expected POST API call, refer. postman collection attached `subsetting_postman`.
 
 
