@@ -9,10 +9,12 @@ def lambda_handler(event, context):
     along with necessary the payloads.
     """
     
-    body = event['body'] # is a string
-    payloadStr = json.dumps(body) # is a string. so not really necessary
+    body = json.loads(event['body']) # is a string
+    payloadStr = json.dumps(body)
 
     client = boto3.client('lambda')
+
+    # The lambda sanjog-subsetting-fcx subsets all the subsets at once
     # client.invoke(
     #     FunctionName='sanjog-subsetting-fcx',
     #     InvocationType="Event",
@@ -55,6 +57,11 @@ def lambda_handler(event, context):
         Payload=payloadStr
     )
     
+    responseBody = {
+                'message': "Subsetting lambda function invoked.",
+                'subsetDir': body['body']['subDir']
+            }
+
     return {
         'statusCode': 200,
         'headers': {
@@ -62,7 +69,5 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST,GET'
         },
-        'body': "Subsetting lambda function invoked."
+        'body': json.dumps(responseBody)
     }
-
-    
