@@ -85,6 +85,10 @@ def lambda_handler(event, context):
                 'subsetDir': body['body']['subDir']
             }
 
+    # SERIALIZE DATA START
+    serializedResponse = SubsetTriggerSerializerSchema().dump(responseBody) #serialize
+    # SERIALIZE DATA END
+
     return {
         'statusCode': 200,
         'headers': {
@@ -92,5 +96,5 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST,GET'
         },
-        'body': json.dumps(responseBody)
+        'body': json.dumps(serializedResponse)
     }
