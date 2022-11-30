@@ -20,7 +20,7 @@ def lambda_handler(event, context):
         SubsetTriggerDeserializerSchema().validate(body)
         payload = SubsetTriggerDeserializerSchema().load(body) #deserilalize
         neededInputData = {**default_datasets, **payload}
-        payloadStr = json.dump(neededInputData)
+        payloadStr = json.dumps(neededInputData)
     except Exception as err:
         # if any kind of error, return it as response.
         return {
@@ -85,7 +85,7 @@ def lambda_handler(event, context):
             }
 
     # SERIALIZE DATA START
-    serializedResponse = SubsetTriggerSerializerSchema().dump(responseBody) #serialize
+    serializedResponse = SubsetTriggerSerializerSchema().dumps(responseBody) #serialize
     # SERIALIZE DATA END
 
     return {
