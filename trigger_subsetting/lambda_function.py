@@ -11,8 +11,28 @@ def lambda_handler(event, context):
     along with necessary the payloads.
     """
     
-    body = json.loads(event['body']) # is a string
-    payloadStr = json.dumps(body)
+    body = json.loads(event) #dictonary
+    # bodyStr = json.dumps(event) #string
+    payload = {}
+    payloadStr = ""
+
+    # DESERIALIZE DATA
+    try:
+        SubsetTriggerDeserializerSchema().validate(body)
+        payload = SubsetTriggerDeserializerSchema().load(body)
+        neededInputData = {**default_datasets, **payload}
+        payloadStr = json.dump(neededInputData)
+    except Exception as err:
+        # if any kind of error, return it as response.
+        return {
+            'statusCode': 400,
+            'headers': {
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST,GET'
+            },
+            'body': err.messages
+        }
 
     client = boto3.client('lambda')
 
