@@ -10,18 +10,13 @@ def lambda_handler(event, context):
     Then it will invoke another AWS lambda function,
     along with necessary the payloads.
     """
-    
-    body = event #dictonary
+    body = json.loads(event["body"]) #dictonary
     payload = {}
     payloadStr = ""
 
     # DESERIALIZE DATA START
-    try:
-        SubsetTriggerDeserializerSchema().validate(body)
-        payload = SubsetTriggerDeserializerSchema().load(body) #deserilalize
-        neededInputData = {**default_datasets, **payload}
-        payloadStr = json.dumps(neededInputData)
-    except Exception as err:
+    validataionError = SubsetTriggerDeserializerSchema().validate(body)
+    if (validataionError):
         # if any kind of error, return it as response.
         return {
             'statusCode': 400,
@@ -30,8 +25,12 @@ def lambda_handler(event, context):
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'POST,GET'
             },
-            'body': err.messages
-        }
+            'body': validataionError
+            }
+    payload = SubsetTriggerDeserializerSchema().load(body) #deserilalize
+    neededInputData = {**default_datasets, **payload}
+    payloadStr = json.dumps(neededInputData)
+
     # DESERIALIZE DATA END
 
     client = boto3.client('lambda')
@@ -95,5 +94,5 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST,GET'
         },
-        'body': json.dumps(serializedResponse)
+        'body': serializedResponse
     }
