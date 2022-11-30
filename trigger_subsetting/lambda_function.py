@@ -1,7 +1,7 @@
 import boto3
 import json
-from SchemasJsonApiStandard.triggerSubset import SubsetTriggerDeserializerSchema, SubsetTriggerSerializerSchema
-from .helper.staticData import default_datasets
+from APILayer.SchemasJsonApiStandard.triggerSubset import SubsetTriggerDeserializerSchema, SubsetTriggerSerializerSchema
+from APILayer.helper.staticData import default_datasets
 
 def lambda_handler(event, context):
     """
