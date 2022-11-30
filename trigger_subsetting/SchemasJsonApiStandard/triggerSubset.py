@@ -1,7 +1,8 @@
 from marshmallow_jsonapi import Schema, fields
 from marshmallow import validate
 
-class SubsetTriggerResposneSchema(Schema):
+# Serializers, before transmitting data
+class SubsetTriggerSerializerSchema(Schema):
     id = fields.Str(dump_only=True)
     message = fields.Str()
     subsetDir = fields.Str()
@@ -9,7 +10,8 @@ class SubsetTriggerResposneSchema(Schema):
     class Meta:
         type_ = "subset_trigger_response"
         
-class SubsetTriggerRequestSchema(Schema):
+# De-Serializers, after receiving data
+class SubsetTriggerDeserializerSchema(Schema):
     id = fields.Str(dump_only=True)
     subDir = fields.Str(required=True)
     date = fields.Str(required=True, validate=validate.Length(6))
