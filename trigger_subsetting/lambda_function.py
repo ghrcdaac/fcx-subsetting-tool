@@ -11,8 +11,7 @@ def lambda_handler(event, context):
     along with necessary the payloads.
     """
     
-    body = json.loads(event) #dictonary
-    # bodyStr = json.dumps(event) #string
+    body = event #dictonary
     payload = {}
     payloadStr = ""
 
@@ -82,7 +81,7 @@ def lambda_handler(event, context):
     
     responseBody = {
                 'message': "Subsetting lambda function invoked.",
-                'subsetDir': body['body']['subDir']
+                'subsetDir': payload['subDir']
             }
 
     # SERIALIZE DATA START
