@@ -16,10 +16,10 @@ def lambda_handler(event, context):
     payload = {}
     payloadStr = ""
 
-    # DESERIALIZE DATA
+    # DESERIALIZE DATA START
     try:
         SubsetTriggerDeserializerSchema().validate(body)
-        payload = SubsetTriggerDeserializerSchema().load(body)
+        payload = SubsetTriggerDeserializerSchema().load(body) #deserilalize
         neededInputData = {**default_datasets, **payload}
         payloadStr = json.dump(neededInputData)
     except Exception as err:
@@ -33,6 +33,7 @@ def lambda_handler(event, context):
             },
             'body': err.messages
         }
+    # DESERIALIZE DATA END
 
     client = boto3.client('lambda')
 
