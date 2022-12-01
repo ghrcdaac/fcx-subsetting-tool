@@ -25,7 +25,7 @@ def lambda_handler(event, context):
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'POST,GET'
             },
-            'body': validataionError
+            'body': json.dumps(validataionError)
             }
     payload = SubsetTriggerDeserializerSchema().load(body) #deserilalize
     neededInputData = {**default_datasets, **payload}
