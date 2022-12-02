@@ -16,57 +16,7 @@ def lambda_handler(event, context):
     
     # when invoked by another lambda function, payload is recieved in string.
     if isinstance(event, str): event = json.loads(event)
-
-    dcEvent = {
-        "subDir": "https://szg-ghrc-fcx-viz-output.s3.amazonaws.com/subsets/subset_test00/",
-        "date": "2017-05-17",
-        # "Start": "2017-05-17 05:52:55 UTC",
-        # "End": "2017-05-17 06:00:02 UTC",
-        "Start": "2017-05-17 07:00:55 UTC",
-        "End": "2017-05-17 07:16:02 UTC",
-        "latRange": "-",
-        "lonRange": "-",
-        "DataSets": [
-            {
-                "id": "1",
-                "cat_id": "CRS",
-                "state": 1
-            },
-            {
-                "id": "2",
-                "cat_id": "LIP",
-                "state": 1
-            },
-            {
-                "id": "3",
-                "cat_id": "FEGS",
-                "state": 1
-            },
-            {
-                "id": "4",
-                "cat_id": "LMA",
-                "state": 1
-            },
-            {
-                "id": "5",
-                "cat_id": "LIS",
-                "state": 1
-            },
-            {
-                "id": "6",
-                "cat_id": "GLM",
-                "state": 1
-            },
-            {
-                "id": "7",
-                "cat_id": "ABI",
-                "state": 1
-            }
-        ]
-    }
-    
-
-    if (event['body']): dcEvent = event['body']
+    if(event): dcEvent = event
     # print('dcEvent',dcEvent)
     
     subsetDir = dcEvent['subDir']
