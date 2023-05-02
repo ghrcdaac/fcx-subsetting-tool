@@ -17,6 +17,7 @@ class SubsetTriggerDeserializerSchema(Schema):
     date = fields.Str(required=True, validate=validate.Length(6))
     Start = fields.Str(required=True, validate=validate.Length(6))
     End = fields.Str(required=True, validate=validate.Length(6))
+    wsTokenId = fields.Str(required=True)
     
     class Meta:
         type_ = "subset_trigger_request"
