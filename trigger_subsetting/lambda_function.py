@@ -1,5 +1,7 @@
 import boto3
 import json
+from APILayer.SchemasJsonApiStandard.triggerSubset import SubsetTriggerDeserializerSchema, SubsetTriggerSerializerSchema
+from APILayer.helper.staticData import default_datasets
 
 def lambda_handler(event, context):
     """
@@ -8,9 +10,28 @@ def lambda_handler(event, context):
     Then it will invoke another AWS lambda function,
     along with necessary the payloads.
     """
-    
-    body = json.loads(event['body']) # is a string
-    payloadStr = json.dumps(body)
+    body = json.loads(event["body"]) #dictonary
+    payload = {}
+    payloadStr = ""
+
+    # DESERIALIZE DATA START
+    validataionError = SubsetTriggerDeserializerSchema().validate(body)
+    if (validataionError):
+        # if any kind of error, return it as response.
+        return {
+            'statusCode': 400,
+            'headers': {
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST,GET'
+            },
+            'body': json.dumps(validataionError)
+            }
+    payload = SubsetTriggerDeserializerSchema().load(body) #deserilalize
+    neededInputData = {**default_datasets, **payload}
+    payloadStr = json.dumps(neededInputData)
+
+    # DESERIALIZE DATA END
 
     client = boto3.client('lambda')
 
@@ -59,8 +80,12 @@ def lambda_handler(event, context):
     
     responseBody = {
                 'message': "Subsetting lambda function invoked.",
-                'subsetDir': body['body']['subDir']
+                'subsetDir': payload['subDir']
             }
+
+    # SERIALIZE DATA START
+    serializedResponse = SubsetTriggerSerializerSchema().dumps(responseBody) #serialize
+    # SERIALIZE DATA END
 
     return {
         'statusCode': 200,
@@ -69,5 +94,5 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST,GET'
         },
-        'body': json.dumps(responseBody)
+        'body': serializedResponse
     }
