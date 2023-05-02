@@ -1,4 +1,4 @@
-declare -a arr=("CRS_subsetting" "FEGS_subsetting" "GLM_subsetting" "LIP_subsetting" "LIS_subsetting" "LMA_subsetting" "trigger_subsetting")
+declare -a arr=("CRS_subsetting" "FEGS_subsetting" "GLM_subsetting" "LIP_subsetting" "LIS_subsetting" "LMA_subsetting" "trigger_subsetting" "layers")
 mkdir ./dist
 for i in "${arr[@]}"
 do
