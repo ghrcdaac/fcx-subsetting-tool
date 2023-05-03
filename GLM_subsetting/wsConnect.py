@@ -1,5 +1,6 @@
 from websocket import create_connection
 import json
+import time
 
 # class declaration
 class WSConnect:
@@ -28,4 +29,5 @@ class WSConnect:
         self.ws.send(json.dumps(msg_format))
     
     def close(self):
+        time.sleep(5)
         self.ws.close()
