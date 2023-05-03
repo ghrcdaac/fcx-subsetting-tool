@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 import json
+import os
 import warnings
 warnings.filterwarnings("ignore")
 
 from GLM.subset import GOESfiles
 from helpers.s3_helper import copyToSubdir
+from wsConnect import WSConnect
 
 #---download script template in "output" bucket (not raw data bucket)
 scriptTMP = 'subsets/download_template.py'
@@ -18,6 +20,11 @@ def lambda_handler(event, context):
     if(event): dcEvent = event
     # print('dcEvent',dcEvent)
     
+    # create ws connection
+    wsurl =  os.environ.get('WS_URL')
+    wsTokenId = dcEvent["wsTokenId"]
+    wscon = WSConnect(wsurl, wsTokenId)
+
     subsetDir = dcEvent['subDir']
     # output bucket and the dir inside output bucket
     destinationBucket = subsetDir.split('://')[-1].split('.s3.')[0]
@@ -52,9 +59,15 @@ def lambda_handler(event, context):
 
         if('GLM' in dsets):
             filesGLM = GOESfiles(fdate,tstart,tend,instr='GLM')
-            print(filesGLM)
-            if(filesGLM): copyToSubdir(filesGLM, subDir, destinationBucket, instr='GLM/')
+            if(filesGLM):
+                copyToSubdir(filesGLM, subDir, destinationBucket, instr='GLM/')
+                wscon.sendMessage({"message": "subsetting GLM done.", "GLM": "True"})
+            else:
+                wscon.sendMessage({"message": "subsetting glm failed.", "GLM": "FALSE"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
+        wscon.sendMessage({"message": "subsetting time less than 10 seconds.", "GLM": "FALSE"})
+    wscon.close()
+
 
 # lambda_handler(1,2)
