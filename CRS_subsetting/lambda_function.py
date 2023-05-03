@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
 import json
 import warnings
+import os
 warnings.filterwarnings("ignore")
 
 from CRS.subset import subsetCRS
 from helpers.s3_helper import moveToSubdir
+from wsConnect import WSConnect
 
 #---download script template in "output" bucket (not raw data bucket)
 scriptTMP = 'subsets/download_template.py'
@@ -17,7 +19,12 @@ def lambda_handler(event, context):
     if isinstance(event, str): event = json.loads(event)
     if(event): dcEvent = event
     # print('dcEvent',dcEvent)
-    
+
+    # create ws connection
+    wsurl =  os.environ.get('WS_URL')
+    wsTokenId = dcEvent["wsTokenId"]
+    wscon = WSConnect(wsurl, wsTokenId)
+
     subsetDir = dcEvent['subDir']
     # output bucket and the dir inside output bucket
     destinationBucket = subsetDir.split('://')[-1].split('.s3.')[0]
@@ -52,8 +59,14 @@ def lambda_handler(event, context):
     
         if('CRS' in dsets):
             subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, fdate)
-            if(subfile): moveToSubdir(subfile, subDir, destinationBucket)
+            if(subfile):
+                moveToSubdir(subfile, subDir, destinationBucket)
+                wscon.sendMessage({"message": "subsetting CRS done.", "CRS": "True"})
+            else:
+                wscon.sendMessage({"message": "subsetting CRS failed.", "CRS": "FALSE"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
+        wscon.sendMessage({"message": "subsetting time less than 10 seconds.", "CRS": "FALSE"})
+    wscon.close()
 
 # lambda_handler(1,2)
