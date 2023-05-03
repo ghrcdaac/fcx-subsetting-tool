@@ -6,6 +6,7 @@ warnings.filterwarnings("ignore")
 from LIS.subset import LISfiles
 from LIS.helpers.stRangesLMA import stRangesLMA
 from helpers.s3_helper import copyToSubdir
+from wsConnect import WSConnect
 
 #---download script template in "output" bucket (not raw data bucket)
 scriptTMP = 'subsets/download_template.py'
@@ -19,6 +20,11 @@ def lambda_handler(event, context):
     if(event): dcEvent = event
     # print('dcEvent',dcEvent)
     
+    # create ws connection
+    wsurl =  os.environ.get('WS_URL')
+    wsTokenId = dcEvent["wsTokenId"]
+    wscon = WSConnect(wsurl, wsTokenId)
+
     subsetDir = dcEvent['subDir']
     # output bucket and the dir inside output bucket
     destinationBucket = subsetDir.split('://')[-1].split('.s3.')[0]
@@ -54,9 +60,14 @@ def lambda_handler(event, context):
         if('LIS' in dsets):
             range, networks = stRangesLMA(fdate)
             filesLIS = LISfiles(fdate,range,tstart,tend, Verb=False)
-            if(filesLIS): copyToSubdir(filesLIS, subDir, destinationBucket, instr='LIS/')
-
+            if(filesLIS):
+                copyToSubdir(filesLIS, subDir, destinationBucket, instr='LIS/')
+                wscon.sendMessage({"message": "subsetting LIS done.", "LIS": "True"})
+            else:
+                wscon.sendMessage({"message": "subsetting LIS failed.", "LIS": "FALSE"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
+        wscon.sendMessage({"message": "subsetting time less than 10 seconds.", "LIS": "FALSE"})
+    wscon.close()
 
 # lambda_handler(1,2)
