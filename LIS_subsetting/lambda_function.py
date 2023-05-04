@@ -63,12 +63,12 @@ def lambda_handler(event, context):
             filesLIS = LISfiles(fdate,range,tstart,tend, Verb=False)
             if(filesLIS):
                 copyToSubdir(filesLIS, subDir, destinationBucket, instr='LIS/')
-                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting LIS done.", "LIS": "True"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting LIS done.", "lis": "true"})
             else:
-                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting LIS failed.", "LIS": "FALSE"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting LIS failed.", "lis": "false"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
-        wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting time less than 10 seconds.", "LIS": "FALSE"})
+        wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting time less than 10 seconds.", "lis": "false"})
     wscon.close()
 
 # lambda_handler(1,2)

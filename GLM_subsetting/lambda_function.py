@@ -61,12 +61,12 @@ def lambda_handler(event, context):
             filesGLM = GOESfiles(fdate,tstart,tend,instr='GLM')
             if(filesGLM):
                 copyToSubdir(filesGLM, subDir, destinationBucket, instr='GLM/')
-                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting GLM done.", "GLM": "True"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting GLM done.", "glm": "true"})
             else:
-                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting glm failed.", "GLM": "FALSE"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting GLM failed.", "glm": "false"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
-        wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting time less than 10 seconds.", "GLM": "FALSE"})
+        wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting time less than 10 seconds.", "glm": "false"})
     wscon.close()
 
 
