@@ -65,14 +65,14 @@ def lambda_handler(event, context):
                 filesLMA = LMAfiles(fdate,tstart,tend,latRange,lonRange, network=network)
                 if(filesLMA):
                     moveToSubdir(filesLMA[0], subDir, destinationBucket)
-                    wscon.sendMessage({"message": "subsetting LMA done.", "LMA": "True"})
+                    wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting LMA done.", "LMA": "True"})
                     # if(latRange=='-'): copyToSubdir(filesLMA, subDir, destinationBucket, instr='LMA/')
                     # else: moveToSubdir(filesLMA[0], subDir, destinationBucket)
                 else:
-                    wscon.sendMessage({"message": "subsetting LMA failed.", "LMA": "FALSE"})
+                    wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting LMA failed.", "LMA": "FALSE"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
-        wscon.sendMessage({"message": "subsetting time less than 10 seconds.", "LMA": "FALSE"})
+        wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting time less than 10 seconds.", "LMA": "FALSE"})
     wscon.close()
 
 # lambda_handler(1,2)

@@ -61,12 +61,12 @@ def lambda_handler(event, context):
             subfile = subsetCRS(t0, tstart, tend, latRange, lonRange, fdate)
             if(subfile):
                 moveToSubdir(subfile, subDir, destinationBucket)
-                wscon.sendMessage({"message": "subsetting CRS done.", "CRS": "True"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting CRS done.", "CRS": "True"})
             else:
-                wscon.sendMessage({"message": "subsetting CRS failed.", "CRS": "FALSE"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting CRS failed.", "CRS": "FALSE"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
-        wscon.sendMessage({"message": "subsetting time less than 10 seconds.", "CRS": "FALSE"})
+        wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting time less than 10 seconds.", "CRS": "FALSE"})
     wscon.close()
 
 # lambda_handler(1,2)

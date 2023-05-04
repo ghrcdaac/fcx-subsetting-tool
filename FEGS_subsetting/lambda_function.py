@@ -62,12 +62,12 @@ def lambda_handler(event, context):
             # print('{} created for FEGS subset'.format(subfile))
             if(subfile):
                 moveToSubdir(subfile, subDir, destinationBucket)
-                wscon.sendMessage({"message": "subsetting FEGS done.", "FEGS": "True"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting FEGS done.", "FEGS": "True"})
             else:
-                wscon.sendMessage({"message": "subsetting FEGS failed.", "FEGS": "FALSE"})
+                wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting FEGS failed.", "FEGS": "FALSE"})
     else:
         print("%%%Error! Temp dir for subset cannot be created!!")
-        wscon.sendMessage({"message": "subsetting time less than 10 seconds.", "FEGS": "FALSE"})
+        wscon.sendMessage({"wstokenid": wsTokenId, "message": "subsetting time less than 10 seconds.", "FEGS": "FALSE"})
     wscon.close()
 
 # lambda_handler(1,2)
