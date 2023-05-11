@@ -82,16 +82,35 @@ resource "aws_iam_role" "lambda_exec" {
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Sid    = ""
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
       }
     ]
   })
+}
+
+data "aws_iam_policy_document" "lamda_s3_access" {
+  statement {
+    effect = "Allow"
+    actions = [
+                "s3:*",
+                "s3-object-lambda:*"
+              ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "lamda_s3_access" {
+  name        = "lambda_s3_access"
+  path        = "/"
+  description = "IAM policy for rd wr access to s3 data from a lambda"
+  policy      = data.aws_iam_policy_document.lamda_s3_access.json
 }
 
 # attach IAM role to the lambda function
@@ -99,4 +118,9 @@ resource "aws_iam_role" "lambda_exec" {
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_s3_access" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.lamda_s3_access.arn
 }
