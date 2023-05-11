@@ -51,7 +51,10 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
   ## TODO: Add more roles
 
   ## TODO: Create layers first, then use their arn.
-  layers = ["arn:aws:lambda:us-east-1:307493436926:layer:XarrS3fsH5ncf:1", "arn:aws:lambda:us-east-1:307493436926:layer:websocket-client:2"]
+  layers = [var.XarrS3fsH5ncf, var.websocket-client]
+
+  memory_size = var.lambda_execution_memory
+  timeout = var.lambda_execution_timeout
 
   environment {
     variables = {
