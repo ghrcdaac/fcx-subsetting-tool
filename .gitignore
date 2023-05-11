@@ -3,3 +3,7 @@ __pycache__/
 data/subsets/
 data/raw/
 dist/
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
