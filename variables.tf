@@ -11,3 +11,28 @@ variable "aws_region" {
   type    = string
   default = "us-east-1"
 }
+
+
+variable "BUCKET_AWS_REGION" {
+  description = "AWS regions for each subset-worker"
+
+  type    = string
+  default = "us-east-1"
+}
+
+
+variable "SOURCE_BUCKET_NAME" {
+  description = "Bucket with raw data files required for the subset-worker"
+
+  type    = string
+  default = "fcx-raw-data"
+}
+
+
+variable "WS_URL" {
+  description = "WS URL needed for communication between subset-worker and frontend; for the progressbar "
+
+  type    = string
+  default = "wss://97cwyclmwd.execute-api.us-east-1.amazonaws.com/development"
+}
+

@@ -49,6 +49,14 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
 
   role = aws_iam_role.lambda_exec.arn
   ## TODO: Add more roles
+
+  environment {
+    variables = {
+      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      WS_URL = var.WS_URL
+    }
+  }
 }
 
 
