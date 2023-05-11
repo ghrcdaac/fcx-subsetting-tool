@@ -50,6 +50,9 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
   role = aws_iam_role.lambda_exec.arn
   ## TODO: Add more roles
 
+  ## TODO: Create layers first, then use their arn.
+  layers = ["arn:aws:lambda:us-east-1:307493436926:layer:XarrS3fsH5ncf:1", "arn:aws:lambda:us-east-1:307493436926:layer:websocket-client:2"]
+
   environment {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
