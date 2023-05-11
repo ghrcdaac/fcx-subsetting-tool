@@ -1,18 +1,18 @@
+## 0. CONFIGURE AWS PROVIDER ##
 provider "aws" {
   shared_credentials_files = [var.aws_creds_path]
   region = var.aws_region
 }
 
+
+
+## 1.1. CREATE BUCKET ##
 resource "aws_s3_bucket" "lambda_bucket" {
   bucket = "fcx-subsetting-tool-terraform"
 }
 
-# resource "aws_s3_bucket_acl" "bucket_acl" {
-#   bucket = aws_s3_bucket.lambda_bucket.id
-#   acl    = "private"
-# }
 
-## zip the lambda codes
+## 1.2. ZIP AND UPLOAD THE LAMBDA CODES ##
 
 # zip FEGS
 data "archive_file" "lambda_FEGS_subset_worker" {
@@ -21,8 +21,6 @@ data "archive_file" "lambda_FEGS_subset_worker" {
   source_dir  = "${path.module}/FEGS_subsetting"
   output_path = "${path.module}/dist/FEGS_subsetting.zip"
 }
-
-## upload the zipped lambda code to the s3 bucket created
 
 # upload FEGS zip
 resource "aws_s3_object" "lambda_FEGS_subset_worker" {
@@ -35,7 +33,7 @@ resource "aws_s3_object" "lambda_FEGS_subset_worker" {
 }
 
 
-## CREATE LAMBDA FUNCTION
+## 1.3. CREATE LAMBDA FUNCTION ##
 
 # Lambda FEGS
 resource "aws_lambda_function" "FEGS_Subset_Worker" {
@@ -53,15 +51,17 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
   ## TODO: Add more roles
 }
 
-## CREATE CLOUDWATCH LOG GROUP
 
+## 1.4. CREATE CLOUDWATCH LOG GROUP ##
 resource "aws_cloudwatch_log_group" "FEGS_Subset_Worker" {
   name = "/aws/lambda/${aws_lambda_function.FEGS_Subset_Worker.function_name}"
 
   retention_in_days = 5
 }
 
-## CREATE IAM ROLE
+
+
+## 2.1. CREATE AND ATTACH IAM ROLE POLICY ##
 
 resource "aws_iam_role" "lambda_exec" {
   name = "serverless_lambda_subsetting_workers"
@@ -80,7 +80,7 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-# ADD IAM ROLE INTO LAMBDA FUNCTION
+# attach IAM role to the lambda function
 
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
