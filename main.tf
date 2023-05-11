@@ -56,6 +56,10 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
   memory_size = var.lambda_execution_memory
   timeout = var.lambda_execution_timeout
 
+  ephemeral_storage {
+    size = var.lambda_execution_ephimeral_storage
+  }
+
   environment {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION

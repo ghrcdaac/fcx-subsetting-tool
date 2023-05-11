@@ -55,6 +55,13 @@ variable "lambda_execution_memory" {
   default = 1024
 }
 
+variable "lambda_execution_ephimeral_storage" {
+  description = "Maximum storage of /tmp that the lambda execution can use (in MB)."
+
+  type    = number
+  default = 5120
+}
+
 
 ## variables for layers arns requried by lambda functions
 
