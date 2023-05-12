@@ -82,7 +82,7 @@ resource "aws_iam_role" "lambda_trigger" {
 data "aws_iam_policy_document" "lambda_invoke_lambda" {
   statement {
     effect = "Allow"
-    actions = "lambda:InvokeFunction"
+    actions = ["lambda:InvokeFunction"]
     resources = ["*"]
     # TODO: make resource specific
   }
@@ -470,8 +470,52 @@ resource "aws_lambda_function" "subset_trigger" {
 
 
 ## 2.4. CREATE CLOUDWATCH LOG GROUP ##
+
+# log CRS worker
+resource "aws_cloudwatch_log_group" "CRS_Subset_Worker" {
+  name = "/aws/lambda/${aws_lambda_function.CRS_Subset_Worker.function_name}"
+
+  retention_in_days = 5
+}
+
+# log FEGS worker
 resource "aws_cloudwatch_log_group" "FEGS_Subset_Worker" {
   name = "/aws/lambda/${aws_lambda_function.FEGS_Subset_Worker.function_name}"
+
+  retention_in_days = 5
+}
+
+# log GLM worker
+resource "aws_cloudwatch_log_group" "GLM_Subset_Worker" {
+  name = "/aws/lambda/${aws_lambda_function.GLM_Subset_Worker.function_name}"
+
+  retention_in_days = 5
+}
+
+# log LIP worker
+resource "aws_cloudwatch_log_group" "LIP_Subset_Worker" {
+  name = "/aws/lambda/${aws_lambda_function.LIP_Subset_Worker.function_name}"
+
+  retention_in_days = 5
+}
+
+# log LIS worker
+resource "aws_cloudwatch_log_group" "LIS_Subset_Worker" {
+  name = "/aws/lambda/${aws_lambda_function.LIS_Subset_Worker.function_name}"
+
+  retention_in_days = 5
+}
+
+# log LMA worker
+resource "aws_cloudwatch_log_group" "LMA_Subset_Worker" {
+  name = "/aws/lambda/${aws_lambda_function.LMA_Subset_Worker.function_name}"
+
+  retention_in_days = 5
+}
+
+# log trigger main
+resource "aws_cloudwatch_log_group" "Subset_Trigger" {
+  name = "/aws/lambda/${aws_lambda_function.subset_trigger.function_name}"
 
   retention_in_days = 5
 }
