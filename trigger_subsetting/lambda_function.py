@@ -43,37 +43,37 @@ def lambda_handler(event, context):
     # )
     
     client.invoke(
-        FunctionName='sanjog-subsetting-fcx-CRS',
+        FunctionName="fcx-subsetting-CRS-worker",
         InvocationType="Event",
         Payload=payloadStr
     )    
 
     client.invoke(
-        FunctionName='sanjog-subsetting-fcx-FEGS',
+        FunctionName="fcx-subsetting-FEGS-worker",
         InvocationType="Event",
         Payload=payloadStr
     )
     
     client.invoke(
-        FunctionName='sanjog-subsetting-fcx-GLM',
+        FunctionName="fcx-subsetting-GLM-worker",
         InvocationType="Event",
         Payload=payloadStr
     )
     
     client.invoke(
-        FunctionName='sanjog-subsetting-fcx-LIP',
+        FunctionName="fcx-subsetting-LIP-worker",
         InvocationType="Event",
         Payload=payloadStr
     )
     
     client.invoke(
-        FunctionName='sanjog-subsetting-fcx-LIS',
+        FunctionName="fcx-subsetting-LIS-worker",
         InvocationType="Event",
         Payload=payloadStr
     )
     
     client.invoke(
-        FunctionName='sanjog-subsetting-fcx-LMA',
+        FunctionName="fcx-subsetting-LMA-worker",
         InvocationType="Event",
         Payload=payloadStr
     )
