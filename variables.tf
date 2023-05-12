@@ -72,9 +72,23 @@ variable "XarrS3fsH5ncf" {
   default = "arn:aws:lambda:us-east-1:307493436926:layer:XarrS3fsH5ncf:1"
 }
 
+variable "XarrScipy" {
+  description = "includes xarray and scipy"
+
+  type    = string
+  default = "arn:aws:lambda:us-east-1:307493436926:layer:XarrScipy:1"
+}
+
 variable "websocket-client" {
   description = "includes websocket-client package"
 
   type    = string
   default = "arn:aws:lambda:us-east-1:307493436926:layer:websocket-client:2"
+}
+
+variable "fcx-sst-marshmallow_json" {
+  description = "includes marshmallow_json package"
+
+  type    = string
+  default = "arn:aws:lambda:us-east-1:307493436926:layer:fcx-sst-marshmallow_json:3"
 }

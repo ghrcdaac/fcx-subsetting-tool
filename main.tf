@@ -202,6 +202,39 @@ resource "aws_s3_object" "lambda_subset_trigger" {
 
 ## 2.3. CREATE LAMBDA FUNCTION ##
 
+# Lambda CRS
+resource "aws_lambda_function" "CRS_Subset_Worker" {
+  function_name = "fcx-subsetting-CRS-worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_CRS_subset_worker.key
+
+  runtime = "python3.8"
+  handler = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_CRS_subset_worker.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+
+  ## TODO: Create layers first, then use their arn.
+  layers = [var.XarrScipy, var.websocket-client]
+
+  memory_size = var.lambda_execution_memory
+  timeout = var.lambda_execution_timeout
+
+  ephemeral_storage {
+    size = var.lambda_execution_ephimeral_storage
+  }
+
+  environment {
+    variables = {
+      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      WS_URL = var.WS_URL
+    }
+  }
+}
+
 # Lambda FEGS
 resource "aws_lambda_function" "FEGS_Subset_Worker" {
   function_name = "fcx-subsetting-FEGS-worker"
@@ -215,7 +248,6 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
   source_code_hash = data.archive_file.lambda_FEGS_subset_worker.output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
-  ## TODO: Add more roles
 
   ## TODO: Create layers first, then use their arn.
   layers = [var.XarrS3fsH5ncf, var.websocket-client]
@@ -235,6 +267,157 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
     }
   }
 }
+
+# Lambda GLM
+resource "aws_lambda_function" "GLM_Subset_Worker" {
+  function_name = "fcx-subsetting-GLM-worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_GLM_subset_worker.key
+
+  runtime = "python3.8"
+  handler = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_GLM_subset_worker.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+
+  ## TODO: Create layers first, then use their arn.
+  layers = [var.XarrS3fsH5ncf, var.websocket-client]
+
+  memory_size = var.lambda_execution_memory
+  timeout = var.lambda_execution_timeout
+
+  ephemeral_storage {
+    size = var.lambda_execution_ephimeral_storage
+  }
+
+  environment {
+    variables = {
+      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      WS_URL = var.WS_URL
+    }
+  }
+}
+
+# Lambda LIP
+resource "aws_lambda_function" "LIP_Subset_Worker" {
+  function_name = "fcx-subsetting-LIP-worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_LIP_subset_worker.key
+
+  runtime = "python3.8"
+  handler = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_LIP_subset_worker.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+
+  ## TODO: Create layers first, then use their arn.
+  layers = [var.XarrS3fsH5ncf, var.websocket-client]
+
+  memory_size = var.lambda_execution_memory
+  timeout = var.lambda_execution_timeout
+
+  ephemeral_storage {
+    size = var.lambda_execution_ephimeral_storage
+  }
+
+  environment {
+    variables = {
+      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      WS_URL = var.WS_URL
+    }
+  }
+}
+
+# Lambda LIS
+resource "aws_lambda_function" "LIS_Subset_Worker" {
+  function_name = "fcx-subsetting-LIS-worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_LIS_subset_worker.key
+
+  runtime = "python3.8"
+  handler = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_LIS_subset_worker.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+
+  ## TODO: Create layers first, then use their arn.
+  layers = [var.XarrS3fsH5ncf, var.websocket-client]
+
+  memory_size = var.lambda_execution_memory
+  timeout = var.lambda_execution_timeout
+
+  ephemeral_storage {
+    size = var.lambda_execution_ephimeral_storage
+  }
+
+  environment {
+    variables = {
+      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      WS_URL = var.WS_URL
+    }
+  }
+}
+
+# Lambda LMA
+resource "aws_lambda_function" "LMA_Subset_Worker" {
+  function_name = "fcx-subsetting-LMA-worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_LMA_subset_worker.key
+
+  runtime = "python3.8"
+  handler = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_LMA_subset_worker.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+
+  ## TODO: Create layers first, then use their arn.
+  layers = [var.XarrS3fsH5ncf, var.websocket-client]
+
+  memory_size = var.lambda_execution_memory
+  timeout = var.lambda_execution_timeout
+
+  ephemeral_storage {
+    size = var.lambda_execution_ephimeral_storage
+  }
+
+  environment {
+    variables = {
+      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      WS_URL = var.WS_URL
+    }
+  }
+}
+
+# Lambda TRIGGER
+resource "aws_lambda_function" "subset_trigger" {
+  function_name = "fcx-subsetting-trigger"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_subset_trigger.key
+
+  runtime = "python3.8"
+  handler = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_subset_trigger.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+
+  ## TODO: Create layers first, then use their arn.
+  layers = [var.fcx-sst-marshmallow_json]
+}
+
 
 
 ## 2.4. CREATE CLOUDWATCH LOG GROUP ##
