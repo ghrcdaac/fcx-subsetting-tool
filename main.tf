@@ -1,3 +1,5 @@
+########## COMMON DECLARATIONS ##########
+
 ## 0. CONFIGURE AWS PROVIDER ##
 provider "aws" {
   shared_credentials_files = [var.aws_creds_path]
@@ -5,81 +7,7 @@ provider "aws" {
 }
 
 
-
-## 1.1. CREATE BUCKET ##
-resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "fcx-subsetting-tool-terraform"
-}
-
-
-## 1.2. ZIP AND UPLOAD THE LAMBDA CODES ##
-
-# zip FEGS
-data "archive_file" "lambda_FEGS_subset_worker" {
-  type = "zip"
-
-  source_dir  = "${path.module}/FEGS_subsetting"
-  output_path = "${path.module}/dist/FEGS_subsetting.zip"
-}
-
-# upload FEGS zip
-resource "aws_s3_object" "lambda_FEGS_subset_worker" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-
-  key    = "FEGS_subsetting.zip"
-  source = data.archive_file.lambda_FEGS_subset_worker.output_path
-
-  etag = filemd5(data.archive_file.lambda_FEGS_subset_worker.output_path)
-}
-
-
-## 1.3. CREATE LAMBDA FUNCTION ##
-
-# Lambda FEGS
-resource "aws_lambda_function" "FEGS_Subset_Worker" {
-  function_name = "fcx-subsetting-FEGS-worker"
-
-  s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.lambda_FEGS_subset_worker.key
-
-  runtime = "python3.8"
-  handler = "lambda_function.lambda_handler"
-
-  source_code_hash = data.archive_file.lambda_FEGS_subset_worker.output_base64sha256
-
-  role = aws_iam_role.lambda_exec.arn
-  ## TODO: Add more roles
-
-  ## TODO: Create layers first, then use their arn.
-  layers = [var.XarrS3fsH5ncf, var.websocket-client]
-
-  memory_size = var.lambda_execution_memory
-  timeout = var.lambda_execution_timeout
-
-  ephemeral_storage {
-    size = var.lambda_execution_ephimeral_storage
-  }
-
-  environment {
-    variables = {
-      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
-      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
-      WS_URL = var.WS_URL
-    }
-  }
-}
-
-
-## 1.4. CREATE CLOUDWATCH LOG GROUP ##
-resource "aws_cloudwatch_log_group" "FEGS_Subset_Worker" {
-  name = "/aws/lambda/${aws_lambda_function.FEGS_Subset_Worker.function_name}"
-
-  retention_in_days = 5
-}
-
-
-
-## 2.1. CREATE AND ATTACH IAM ROLE POLICY ##
+## 1.1. CREATE ROLE AND ATTACH IAM ROLE POLICY ##
 
 resource "aws_iam_role" "lambda_exec" {
   name = "serverless_lambda_subsetting_workers"
@@ -127,4 +55,80 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 resource "aws_iam_role_policy_attachment" "lambda_s3_access" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.lamda_s3_access.arn
+}
+
+
+
+## 2.1. CREATE BUCKET ##
+
+resource "aws_s3_bucket" "lambda_bucket" {
+  bucket = "fcx-subsetting-tool-terraform"
+}
+
+
+########## LAMBDA SPECIFIC DECLARATIONS ##########
+
+## 2.2. ZIP AND UPLOAD THE LAMBDA CODES ##
+
+# zip FEGS
+data "archive_file" "lambda_FEGS_subset_worker" {
+  type = "zip"
+
+  source_dir  = "${path.module}/FEGS_subsetting"
+  output_path = "${path.module}/dist/FEGS_subsetting.zip"
+}
+
+# upload FEGS zip
+resource "aws_s3_object" "lambda_FEGS_subset_worker" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "FEGS_subsetting.zip"
+  source = data.archive_file.lambda_FEGS_subset_worker.output_path
+
+  etag = filemd5(data.archive_file.lambda_FEGS_subset_worker.output_path)
+}
+
+
+## 2.3. CREATE LAMBDA FUNCTION ##
+
+# Lambda FEGS
+resource "aws_lambda_function" "FEGS_Subset_Worker" {
+  function_name = "fcx-subsetting-FEGS-worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_FEGS_subset_worker.key
+
+  runtime = "python3.8"
+  handler = "lambda_function.lambda_handler"
+
+  source_code_hash = data.archive_file.lambda_FEGS_subset_worker.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+  ## TODO: Add more roles
+
+  ## TODO: Create layers first, then use their arn.
+  layers = [var.XarrS3fsH5ncf, var.websocket-client]
+
+  memory_size = var.lambda_execution_memory
+  timeout = var.lambda_execution_timeout
+
+  ephemeral_storage {
+    size = var.lambda_execution_ephimeral_storage
+  }
+
+  environment {
+    variables = {
+      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      WS_URL = var.WS_URL
+    }
+  }
+}
+
+
+## 2.4. CREATE CLOUDWATCH LOG GROUP ##
+resource "aws_cloudwatch_log_group" "FEGS_Subset_Worker" {
+  name = "/aws/lambda/${aws_lambda_function.FEGS_Subset_Worker.function_name}"
+
+  retention_in_days = 5
 }
