@@ -9,6 +9,7 @@ provider "aws" {
 
 ## 1.1. CREATE ROLE AND ATTACH IAM ROLE POLICY ##
 
+# FOR WORKERS
 resource "aws_iam_role" "lambda_exec" {
   name = "serverless_lambda_subsetting_workers"
 
@@ -35,6 +36,7 @@ data "aws_iam_policy_document" "lamda_s3_access" {
                 "s3-object-lambda:*"
               ]
     resources = ["*"]
+    # TODO: make resource specific
   }
 }
 
@@ -57,6 +59,53 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_access" {
   policy_arn = aws_iam_policy.lamda_s3_access.arn
 }
 
+
+# FOR TRIGGER
+resource "aws_iam_role" "lambda_trigger" {
+  name = "serverless_lambda_subsetting_trigger"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+data "aws_iam_policy_document" "lambda_invoke_lambda" {
+  statement {
+    effect = "Allow"
+    actions = "lambda:InvokeFunction"
+    resources = ["*"]
+    # TODO: make resource specific
+  }
+}
+
+resource "aws_iam_policy" "lambda_invoke_lambda" {
+  name        = "lambda_invoke_lambda"
+  path        = "/"
+  description = "IAM policy that allows a lambda to invoke another lambda"
+  policy      = data.aws_iam_policy_document.lambda_invoke_lambda.json
+}
+
+# attach IAM role to the lambda function
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_basic" {
+  role       = aws_iam_role.lambda_trigger.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_invoke_lambda" {
+  role       = aws_iam_role.lambda_trigger.name
+  policy_arn = aws_iam_policy.lambda_invoke_lambda.arn
+}
 
 
 ## 2.1. CREATE BUCKET ##
@@ -412,7 +461,7 @@ resource "aws_lambda_function" "subset_trigger" {
 
   source_code_hash = data.archive_file.lambda_subset_trigger.output_base64sha256
 
-  role = aws_iam_role.lambda_exec.arn
+  role = aws_iam_role.lambda_trigger.arn
 
   ## TODO: Create layers first, then use their arn.
   layers = [var.fcx-sst-marshmallow_json]
