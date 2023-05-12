@@ -1,4 +1,4 @@
-import boto3, s3fs
+import boto3
 import os
 from datetime import datetime
 
@@ -101,17 +101,6 @@ def makesubDir(desbucket, subDir,scriptTMP):
         mkDLscript(scriptTMP, desbucket, subDir)
         
         print(subDir,' Dir created for current subset with download script ready\n')
-
-def s3FileObj(fname):
-    """
-    Return S3 file object to be accessed using xarray or hdf5/netcdf4.
-    """
-    s3bucket = bucket0
-    file = s3bucket+'/'+fname
-    fs = s3fs.S3FileSystem()  #(anon=False)
-    fileObj = fs.open(file,'rb')
-
-    return fileObj
 
 def readObject(fname):
     """    
