@@ -70,12 +70,72 @@ resource "aws_s3_bucket" "lambda_bucket" {
 
 ## 2.2. ZIP AND UPLOAD THE LAMBDA CODES ##
 
+# ZIP
+# zip CRS
+data "archive_file" "lambda_CRS_subset_worker" {
+  type = "zip"
+
+  source_dir  = "${path.module}/CRS_subsetting"
+  output_path = "${path.module}/dist/CRS_subsetting.zip"
+}
+
 # zip FEGS
 data "archive_file" "lambda_FEGS_subset_worker" {
   type = "zip"
 
   source_dir  = "${path.module}/FEGS_subsetting"
   output_path = "${path.module}/dist/FEGS_subsetting.zip"
+}
+
+# zip GLM
+data "archive_file" "lambda_GLM_subset_worker" {
+  type = "zip"
+
+  source_dir  = "${path.module}/GLM_subsetting"
+  output_path = "${path.module}/dist/GLM_subsetting.zip"
+}
+
+# zip LIP
+data "archive_file" "lambda_LIP_subset_worker" {
+  type = "zip"
+
+  source_dir  = "${path.module}/LIP_subsetting"
+  output_path = "${path.module}/dist/LIP_subsetting.zip"
+}
+
+# zip LIS
+data "archive_file" "lambda_LIS_subset_worker" {
+  type = "zip"
+
+  source_dir  = "${path.module}/LIS_subsetting"
+  output_path = "${path.module}/dist/LIS_subsetting.zip"
+}
+
+# zip LMA
+data "archive_file" "lambda_LMA_subset_worker" {
+  type = "zip"
+
+  source_dir  = "${path.module}/LMA_subsetting"
+  output_path = "${path.module}/dist/LMA_subsetting.zip"
+}
+
+# zip TRIGGER
+data "archive_file" "lambda_subset_trigger" {
+  type = "zip"
+
+  source_dir  = "${path.module}/trigger_subsetting"
+  output_path = "${path.module}/dist/trigger_subsetting.zip"
+}
+
+# UPLOAD
+# upload CRS zip
+resource "aws_s3_object" "lambda_CRS_subset_worker" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "CRS_subsetting.zip"
+  source = data.archive_file.lambda_CRS_subset_worker.output_path
+
+  etag = filemd5(data.archive_file.lambda_CRS_subset_worker.output_path)
 }
 
 # upload FEGS zip
@@ -87,6 +147,57 @@ resource "aws_s3_object" "lambda_FEGS_subset_worker" {
 
   etag = filemd5(data.archive_file.lambda_FEGS_subset_worker.output_path)
 }
+
+# upload GLM zip
+resource "aws_s3_object" "lambda_GLM_subset_worker" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "GLM_subsetting.zip"
+  source = data.archive_file.lambda_GLM_subset_worker.output_path
+
+  etag = filemd5(data.archive_file.lambda_GLM_subset_worker.output_path)
+}
+
+# upload LIP zip
+resource "aws_s3_object" "lambda_LIP_subset_worker" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "LIP_subsetting.zip"
+  source = data.archive_file.lambda_LIP_subset_worker.output_path
+
+  etag = filemd5(data.archive_file.lambda_LIP_subset_worker.output_path)
+}
+
+# upload LIS zip
+resource "aws_s3_object" "lambda_LIS_subset_worker" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "LIS_subsetting.zip"
+  source = data.archive_file.lambda_LIS_subset_worker.output_path
+
+  etag = filemd5(data.archive_file.lambda_LIS_subset_worker.output_path)
+}
+
+# upload LMA zip
+resource "aws_s3_object" "lambda_LMA_subset_worker" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "LMA_subsetting.zip"
+  source = data.archive_file.lambda_LMA_subset_worker.output_path
+
+  etag = filemd5(data.archive_file.lambda_LMA_subset_worker.output_path)
+}
+
+# upload TRIGGER zip
+resource "aws_s3_object" "lambda_subset_trigger" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+
+  key    = "trigger_subsetting.zip"
+  source = data.archive_file.lambda_subset_trigger.output_path
+
+  etag = filemd5(data.archive_file.lambda_subset_trigger.output_path)
+}
+
 
 
 ## 2.3. CREATE LAMBDA FUNCTION ##
