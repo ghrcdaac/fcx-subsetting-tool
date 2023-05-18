@@ -37,3 +37,12 @@
 4. Import each subsetting inside the `lambda_function` of the `trigger_subsetting`, and invoke them (instead of lambda `client.invoke`)
 5. Uncomment the `lambda_handler()` function call in the `lambda_function.py` for each subsetting.
 6. Run `bash start.sh`
+
+
+NEW WAY TO DEPOLY
+
+- place aws credentials inside ~/.aws/credentials
+- modify variables.tf default values as desired
+- terraform init
+- terrafrom plan
+- terraform apply
