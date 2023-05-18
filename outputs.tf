@@ -10,3 +10,9 @@ output "api_key" {
   value = aws_api_gateway_api_key.subset_trigger_api_key.value
   sensitive = true
 }
+
+output "ws_endpoint" {
+  description = "ws endpoint to start websocket connection."
+
+  value = "${aws_apigatewayv2_stage.subsetting_ws.invoke_url}"
+}
