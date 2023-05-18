@@ -1,12 +1,5 @@
 ########## COMMON DECLARATIONS ##########
 
-## 0. CONFIGURE AWS PROVIDER ##
-provider "aws" {
-  shared_credentials_files = [var.aws_creds_path]
-  region = var.aws_region
-}
-
-
 ## 1.1. CREATE ROLE AND ATTACH IAM ROLE POLICY ##
 
 resource "aws_iam_role" "websocket_lambdas_subsetting_tool" {
@@ -56,17 +49,18 @@ resource "aws_iam_policy" "dynamodb_access_policy" {
 
 # attach IAM role to the lambda function
 
-resource "aws_iam_role_policy_attachment" "lambda_policy_basic" {
+resource "aws_iam_role_policy_attachment" "ws_lambda_policy_basic" {
   role       = aws_iam_role.websocket_lambdas_subsetting_tool.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_access_dynamodb" {
+resource "aws_iam_role_policy_attachment" "ws_lambda_access_dynamodb" {
   role       = aws_iam_role.websocket_lambdas_subsetting_tool.name
   policy_arn = aws_iam_policy.dynamodb_access_policy.arn
 }
 
 
+########## LAMBDA SPECIFIC DECLARATIONS ##########
 
 ## 2.1. CREATE BUCKET ##
 
@@ -152,3 +146,121 @@ resource "aws_s3_object" "ws_on_disconnect_worker" {
 }
 
 
+
+## 2.3. CREATE LAMBDA FUNCTION ##
+
+# Lambda ws_on_connect_worker
+resource "aws_lambda_function" "ws_on_connect_worker" {
+  function_name = "fcx-subsetting-ws_on_connect_worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.ws_on_connect_worker.key
+
+  runtime =  "nodejs14.x"
+  handler = "app.handler"
+
+  source_code_hash = data.archive_file.ws_on_connect_worker.output_base64sha256
+
+  role = aws_iam_role.websocket_lambdas_subsetting_tool.arn
+
+  environment {
+    variables = {
+      TABLE_NAME = var.TABLE_NAME
+    }
+  }
+}
+
+# Lambda ws_after_connect_worker
+resource "aws_lambda_function" "ws_after_connect_worker" {
+  function_name = "fcx-subsetting-ws_after_connect_worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.ws_after_connect_worker.key
+
+  runtime =  "nodejs14.x"
+  handler = "app.handler"
+
+  source_code_hash = data.archive_file.ws_after_connect_worker.output_base64sha256
+
+  role = aws_iam_role.websocket_lambdas_subsetting_tool.arn
+
+  environment {
+    variables = {
+      TABLE_NAME = var.TABLE_NAME
+    }
+  }
+}
+
+# Lambda ws_on_send_message_worker
+resource "aws_lambda_function" "ws_on_send_message_worker" {
+  function_name = "fcx-subsetting-ws_on_send_message_worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.ws_on_send_message_worker.key
+
+  runtime =  "nodejs14.x"
+  handler = "app.handler"
+
+  source_code_hash = data.archive_file.ws_on_send_message_worker.output_base64sha256
+
+  role = aws_iam_role.websocket_lambdas_subsetting_tool.arn
+
+  environment {
+    variables = {
+      TABLE_NAME = var.TABLE_NAME
+    }
+  }
+}
+
+# Lambda ws_on_disconnect_worker
+resource "aws_lambda_function" "ws_on_disconnect_worker" {
+  function_name = "fcx-subsetting-ws_on_disconnect_worker"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.ws_on_disconnect_worker.key
+
+  runtime =  "nodejs14.x"
+  handler = "app.handler"
+
+  source_code_hash = data.archive_file.ws_on_disconnect_worker.output_base64sha256
+
+  role = aws_iam_role.websocket_lambdas_subsetting_tool.arn
+
+  environment {
+    variables = {
+      TABLE_NAME = var.TABLE_NAME
+    }
+  }
+}
+
+
+
+## 2.4. CREATE CLOUDWATCH LOG GROUP ##
+
+# log ws_on_connect_worker
+resource "aws_cloudwatch_log_group" "ws_on_connect_worker" {
+  name = "/aws/lambda/${aws_lambda_function.ws_on_connect_worker.function_name}"
+
+  retention_in_days = 3
+}
+
+# log ws_after_connect_worker
+resource "aws_cloudwatch_log_group" "ws_after_connect_worker" {
+  name = "/aws/lambda/${aws_lambda_function.ws_after_connect_worker.function_name}"
+
+  retention_in_days = 3
+}
+
+# log ws_on_send_message_worker
+resource "aws_cloudwatch_log_group" "ws_on_send_message_worker" {
+  name = "/aws/lambda/${aws_lambda_function.ws_on_send_message_worker.function_name}"
+
+  retention_in_days = 3
+}
+
+# log ws_on_disconnect_worker
+resource "aws_cloudwatch_log_group" "ws_on_disconnect_worker" {
+  name = "/aws/lambda/${aws_lambda_function.ws_on_disconnect_worker.function_name}"
+
+  retention_in_days = 3
+}
