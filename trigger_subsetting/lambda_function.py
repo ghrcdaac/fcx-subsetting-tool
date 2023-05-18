@@ -10,7 +10,8 @@ def lambda_handler(event, context):
     Then it will invoke another AWS lambda function,
     along with necessary the payloads.
     """
-    body = json.loads(event["body"]) #dictonary
+    # body = json.loads(event["body"]) #dictonary
+    body = event
     payload = {}
     payloadStr = ""
 
