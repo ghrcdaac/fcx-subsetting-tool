@@ -391,5 +391,5 @@ resource "aws_apigatewayv2_deployment" "subsetting_ws" {
 
 resource "aws_apigatewayv2_stage" "subsetting_ws" {
   api_id = aws_apigatewayv2_api.subsetting_ws.id
-  name   = "development"
+  name   = var.stage_name
 }
