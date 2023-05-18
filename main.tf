@@ -601,6 +601,7 @@ resource "aws_api_gateway_deployment" "subset_trigger_api_deployment" {
       aws_api_gateway_resource.subset_trigger_api_resource.id,
       aws_api_gateway_method.subset_trigger_api_method.id,
       aws_api_gateway_integration.subset_trigger_api_integration.id,
+      //TODO: add for workers as well
     ]))
   }
 

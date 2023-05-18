@@ -264,3 +264,132 @@ resource "aws_cloudwatch_log_group" "ws_on_disconnect_worker" {
 
   retention_in_days = 3
 }
+
+
+## WS API GATEWAY
+
+# stage
+# deployment
+
+## routes
+# route selection expression [Done]
+# route request
+# integration request
+
+
+# API Gateway name
+resource "aws_apigatewayv2_api" "subsetting_ws" {
+  name                       = "subsetting_ws"
+  protocol_type              = "WEBSOCKET"
+  route_selection_expression = "$request.body.action"
+}
+
+
+
+## INTEGRATION OF GATEWAY AND LAMBDA TRIGGER
+
+resource "aws_apigatewayv2_integration" "connect" {
+  api_id           = aws_apigatewayv2_api.subsetting_ws.id
+  integration_type = "AWS_PROXY"
+
+  content_handling_strategy = "CONVERT_TO_TEXT"
+  integration_method        = "POST"
+  integration_uri           = aws_lambda_function.ws_on_connect_worker.invoke_arn
+}
+
+resource "aws_apigatewayv2_integration" "afterconnect" {
+  api_id           = aws_apigatewayv2_api.subsetting_ws.id
+  integration_type = "AWS_PROXY"
+
+  content_handling_strategy = "CONVERT_TO_TEXT"
+  integration_method        = "POST"
+  integration_uri           = aws_lambda_function.ws_after_connect_worker.invoke_arn
+}
+
+resource "aws_apigatewayv2_integration" "sendmessage" {
+  api_id           = aws_apigatewayv2_api.subsetting_ws.id
+  integration_type = "AWS_PROXY"
+
+  content_handling_strategy = "CONVERT_TO_TEXT"
+  integration_method        = "POST"
+  integration_uri           = aws_lambda_function.ws_on_send_message_worker.invoke_arn
+}
+
+resource "aws_apigatewayv2_integration" "disconnect" {
+  api_id           = aws_apigatewayv2_api.subsetting_ws.id
+  integration_type = "AWS_PROXY"
+
+  content_handling_strategy = "CONVERT_TO_TEXT"
+  integration_method        = "POST"
+  integration_uri           = aws_lambda_function.ws_on_disconnect_worker.invoke_arn
+}
+
+
+
+## Create Routes
+
+resource "aws_apigatewayv2_route" "default" {
+  api_id    = aws_apigatewayv2_api.subsetting_ws.id
+  route_key = "$default"
+  target    = "integrations/${aws_apigatewayv2_integration.connect.id}"
+}
+
+resource "aws_apigatewayv2_route" "connect" {
+  api_id    = aws_apigatewayv2_api.subsetting_ws.id
+  route_key = "$connect"
+  target    = "integrations/${aws_apigatewayv2_integration.connect.id}"
+}
+
+resource "aws_apigatewayv2_route" "disconnect" {
+  api_id    = aws_apigatewayv2_api.subsetting_ws.id
+  route_key = "$disconnect"
+  target    = "integrations/${aws_apigatewayv2_integration.disconnect.id}"
+}
+
+resource "aws_apigatewayv2_route" "afterconnect" {
+  api_id    = aws_apigatewayv2_api.subsetting_ws.id
+  route_key = "afterconnect"
+  target    = "integrations/${aws_apigatewayv2_integration.afterconnect.id}"
+}
+
+resource "aws_apigatewayv2_route" "sendmessage" {
+  api_id    = aws_apigatewayv2_api.subsetting_ws.id
+  route_key = "sendmessage"
+  target    = "integrations/${aws_apigatewayv2_integration.sendmessage.id}"
+}
+
+
+
+## Create deployment for subsetting_ws
+
+resource "aws_apigatewayv2_deployment" "subsetting_ws" {
+  api_id      = aws_apigatewayv2_api.subsetting_ws.id
+  description = "deployment of websocket for subsetting progressbar"
+
+  triggers = {
+    redeployment = sha1(join(",", tolist([
+      jsonencode(aws_apigatewayv2_integration.connect),
+      jsonencode(aws_apigatewayv2_integration.afterconnect),
+      jsonencode(aws_apigatewayv2_integration.sendmessage),
+      jsonencode(aws_apigatewayv2_integration.disconnect),
+      jsonencode(aws_apigatewayv2_route.default),
+      jsonencode(aws_apigatewayv2_route.connect),
+      jsonencode(aws_apigatewayv2_route.afterconnect),
+      jsonencode(aws_apigatewayv2_route.sendmessage),
+      jsonencode(aws_apigatewayv2_route.disconnect)
+    ])))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+
+## create stage for the subsetting_ws
+
+resource "aws_apigatewayv2_stage" "subsetting_ws" {
+  api_id = aws_apigatewayv2_api.subsetting_ws.id
+  name   = "development"
+}
