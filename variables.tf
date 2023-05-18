@@ -92,3 +92,13 @@ variable "fcx-sst-marshmallow_json" {
   type    = string
   default = "arn:aws:lambda:us-east-1:307493436926:layer:fcx-sst-marshmallow_json:3"
 }
+
+variable "accountId" {
+  type    = string
+  default = "307493436926"
+}
+
+variable "stage_name" {
+  type    = string
+  default = "development"
+}

@@ -524,28 +524,150 @@ resource "aws_cloudwatch_log_group" "Subset_Trigger" {
 
 ## REST API GATEWAY
 
+# API Gateway name
 resource "aws_api_gateway_rest_api" "subset_trigger_api" {
   name = "fcx-subsetting-trigger-api"
 }
 
-resource "aws_api_gateway_resource" "resource" {
-  path_part = aws_lambda_function.subset_trigger.function_name #/name
+
+## create resource
+resource "aws_api_gateway_resource" "subset_trigger_api_resource" {
+  path_part   = aws_lambda_function.subset_trigger.function_name
   parent_id   = aws_api_gateway_rest_api.subset_trigger_api.root_resource_id
   rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
 }
 
-resource "aws_api_gateway_method" "method" {
+## create method
+resource "aws_api_gateway_method" "subset_trigger_api_method" {
   rest_api_id   = aws_api_gateway_rest_api.subset_trigger_api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "ANY"
+  resource_id   = aws_api_gateway_resource.subset_trigger_api_resource.id
+  http_method   = "POST"
   authorization = "NONE"
+  api_key_required = true # need api key
 }
 
-resource "aws_api_gateway_integration" "integration" {
+## INTEGRATION OF GATEWAY AND LAMBDA TRIGGER
+
+resource "aws_api_gateway_integration" "subset_trigger_api_integration" {
   rest_api_id             = aws_api_gateway_rest_api.subset_trigger_api.id
-  resource_id             = aws_api_gateway_resource.resource.id
-  http_method             = aws_api_gateway_method.method.http_method
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
+  resource_id             = aws_api_gateway_resource.subset_trigger_api_resource.id
+  http_method             = aws_api_gateway_method.subset_trigger_api_method.http_method
+  integration_http_method = aws_api_gateway_method.subset_trigger_api_method.http_method
+  type                    = "AWS"
   uri                     = aws_lambda_function.subset_trigger.invoke_arn
+}
+
+## PERMISSIONS to trigger lamba from api gateway
+resource "aws_lambda_permission" "subset_trigger_api_gateway_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.subset_trigger.function_name
+  principal     = "apigateway.amazonaws.com"
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_api_gateway_rest_api.subset_trigger_api.id}/*/${aws_api_gateway_method.subset_trigger_api_method.http_method}${aws_api_gateway_resource.subset_trigger_api_resource.path}"
+}
+
+## SET RESPONSE HANDLERS FOR API-GATEWAY
+
+# Success response handler
+resource "aws_api_gateway_method_response" "subset_trigger_api_response_200" {
+  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+  resource_id = aws_api_gateway_resource.subset_trigger_api_resource.id
+  http_method = aws_api_gateway_method.subset_trigger_api_method.http_method
+  status_code = "200"
+}
+
+# Integration response handler
+resource "aws_api_gateway_integration_response" "subset_trigger_api_IntegrationResponse" {
+  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+  resource_id = aws_api_gateway_resource.subset_trigger_api_resource.id
+  http_method = aws_api_gateway_method.subset_trigger_api_method.http_method
+  status_code = aws_api_gateway_method_response.subset_trigger_api_response_200.status_code
+}
+
+## Create deployment for subset_trigger_api
+resource "aws_api_gateway_deployment" "subset_trigger_api_deployment" {
+  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+
+  triggers = {
+    # NOTE: The configuration below will satisfy ordering considerations,
+    #       but not pick up all future REST API changes. More advanced patterns
+    #       are possible, such as using the filesha1() function against the
+    #       Terraform configuration file(s) or removing the .id references to
+    #       calculate a hash against whole resources. Be aware that using whole
+    #       resources will show a difference after the initial implementation.
+    #       It will stabilize to only change when resources change afterwards.
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_resource.subset_trigger_api_resource.id,
+      aws_api_gateway_method.subset_trigger_api_method.id,
+      aws_api_gateway_integration.subset_trigger_api_integration.id,
+    ]))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+## create stage for the subset_trigger_api
+resource "aws_api_gateway_stage" "subset_trigger_api_stage" {
+  deployment_id = aws_api_gateway_deployment.subset_trigger_api_deployment.id
+  rest_api_id   = aws_api_gateway_rest_api.subset_trigger_api.id
+  stage_name    = var.stage_name
+  depends_on = [aws_cloudwatch_log_group.subset_trigger_api]
+}
+
+
+### to enable api key and its usage plan for subset_trigger_api
+
+# create api key
+resource "aws_api_gateway_api_key" "subset_trigger_api_key" {
+  name = "subset_trigger_api-key"
+}
+
+# create usage plans
+resource "aws_api_gateway_usage_plan" "subset_trigger_api_usagePlan" {
+  name         = "subset_trigger_api-usagePlan"
+  description  = "Usage plan for the subset_trigger_api key"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+    stage  = aws_api_gateway_stage.subset_trigger_api_stage.stage_name
+  }
+
+  quota_settings {
+    limit  = 1000
+    offset = 1
+    period = "WEEK"
+  }
+
+  throttle_settings {
+    burst_limit = 100
+    rate_limit  = 1000
+  }
+}
+
+resource "aws_api_gateway_usage_plan_key" "usagePlan_with_key" {
+  key_id        = aws_api_gateway_api_key.subset_trigger_api_key.id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.subset_trigger_api_usagePlan.id
+}
+
+
+## add and enable cloudwatch logs for subset_trigger_api
+
+resource "aws_cloudwatch_log_group" "subset_trigger_api" {
+  name              = "API-Gateway-Execution-Logs_${aws_api_gateway_rest_api.subset_trigger_api.id}/${var.stage_name}"
+  retention_in_days = 3
+}
+
+resource "aws_api_gateway_method_settings" "subset_trigger_api_method" {
+  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+  stage_name  = aws_api_gateway_stage.subset_trigger_api_stage.stage_name
+  method_path = "*/*"
+
+  settings {
+    metrics_enabled = true
+    logging_level   = "INFO"
+  }
 }
