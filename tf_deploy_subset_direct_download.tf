@@ -96,19 +96,6 @@ resource "aws_lambda_function" "get_subsets_filename_worker" {
   s3_bucket = aws_s3_bucket.lambda_bucket.id
   s3_key    = aws_s3_object.get_subsets_filename.key
 
-#   runtime =  "nodejs14.x"
-#   handler = "app.handler"
-
-#   source_code_hash = data.archive_file.ws_on_connect_worker.output_base64sha256
-
-#   role = aws_iam_role.websocket_lambdas_subsetting_tool.arn
-
-#   environment {
-#     variables = {
-#       TABLE_NAME = var.WS_TABLE_NAME
-#     }
-#   }
-
   runtime = "python3.8"
   handler = "lambda_function.lambda_handler"
 
@@ -135,3 +122,85 @@ resource "aws_cloudwatch_log_group" "get_subsets_filename_worker" {
 
   retention_in_days = 3
 }
+
+
+
+
+## 3. REST API GATEWAY
+
+# API Gateway name
+# Resuse from aws_api_gateway_rest_api.subset_trigger_api
+
+
+## create resource
+resource "aws_api_gateway_resource" "subsets_filename" {
+  path_part   = "subset_files"
+  parent_id   = aws_api_gateway_rest_api.subset_trigger_api.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+}
+
+## create method
+resource "aws_api_gateway_method" "subsets_filename" {
+  rest_api_id   = aws_api_gateway_rest_api.subset_trigger_api.id
+  resource_id   = aws_api_gateway_resource.subsets_filename.id
+  http_method   = "POST"
+  authorization = "NONE"
+  api_key_required = true # need api key
+}
+
+## INTEGRATION OF GATEWAY AND LAMBDA TRIGGER
+
+resource "aws_api_gateway_integration" "subsets_filename_api_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.subset_trigger_api.id
+  resource_id             = aws_api_gateway_resource.subsets_filename.id
+  http_method             = aws_api_gateway_method.subsets_filename.http_method
+  integration_http_method = aws_api_gateway_method.subsets_filename.http_method
+  type                    = "AWS"
+  uri                     = aws_lambda_function.get_subsets_filename_worker.invoke_arn
+}
+
+## PERMISSIONS to trigger lamba from api gateway
+resource "aws_lambda_permission" "subsets_filename_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.get_subsets_filename_worker.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_api_gateway_rest_api.subset_trigger_api.id}/*/${aws_api_gateway_method.subsets_filename.http_method}${aws_api_gateway_resource.subsets_filename.path}"
+}
+
+## SET RESPONSE HANDLERS FOR API-GATEWAY
+
+# Success response handler
+resource "aws_api_gateway_method_response" "subsets_filename_api_response_200" {
+  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+  resource_id = aws_api_gateway_resource.subsets_filename.id
+  http_method = aws_api_gateway_method.subsets_filename.http_method
+  status_code = "200"
+  depends_on = [ aws_api_gateway_rest_api.subset_trigger_api ]
+}
+
+# Integration response handler
+resource "aws_api_gateway_integration_response" "subsets_filename_api_IntegrationResponse" {
+  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
+  resource_id = aws_api_gateway_resource.subsets_filename.id
+  http_method = aws_api_gateway_method.subsets_filename.http_method
+  status_code = aws_api_gateway_method_response.subset_trigger_api_response_200.status_code
+  depends_on = [ aws_api_gateway_rest_api.subset_trigger_api ]
+}
+
+
+
+## Create deployment for subsets_filename_api
+# already deployed using: resource `aws_api_gateway_deployment.subset_trigger_api_deployment`
+
+
+
+## create stage for the subsets_filename_api
+# already deployed using: resource "aws_api_gateway_stage.subset_trigger_api_stage"
+
+
+
+## to enable api key and its usage plan for subsets_filename_api
+
+# create api key
+# reuse the one created using resource "aws_api_gateway_api_key.subsets_filename_api_key"

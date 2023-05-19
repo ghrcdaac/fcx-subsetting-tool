@@ -16,3 +16,9 @@ output "ws_endpoint" {
 
   value = "${aws_apigatewayv2_stage.subsetting_ws.invoke_url}"
 }
+
+output "get_subset_filenames_api_endpoint" {
+  description = "api endpoint to get the list of subsets file names and their location."
+
+  value = "${aws_api_gateway_stage.subset_trigger_api_stage.invoke_url}${aws_api_gateway_resource.subsets_filename.path}"
+}
