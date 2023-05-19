@@ -47,6 +47,24 @@ resource "aws_iam_policy" "dynamodb_access_policy" {
   })
 }
 
+resource "aws_iam_policy" "ws_execution_policy" {
+  name        = "WS_connection_execution_permission"
+  path        = "/"
+  description = "Policy that allows lambda function to have ws connection execution"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = ["execute-api:ManageConnections"]
+        Effect   = "Allow"
+        Resource = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
+      },
+    ]
+  })
+
+  depends_on = [ aws_apigatewayv2_api.subsetting_ws ]
+}
+
 # attach IAM role to the lambda function
 
 resource "aws_iam_role_policy_attachment" "ws_lambda_policy_basic" {
@@ -58,6 +76,13 @@ resource "aws_iam_role_policy_attachment" "ws_lambda_access_dynamodb" {
   role       = aws_iam_role.websocket_lambdas_subsetting_tool.name
   policy_arn = aws_iam_policy.dynamodb_access_policy.arn
 }
+
+resource "aws_iam_role_policy_attachment" "ws_lambda_ws_execution" {
+  role       = aws_iam_role.websocket_lambdas_subsetting_tool.name
+  policy_arn = aws_iam_policy.ws_execution_policy.arn
+}
+
+
 
 
 ########## LAMBDA SPECIFIC DECLARATIONS ##########
