@@ -190,7 +190,7 @@ resource "aws_lambda_function" "ws_on_connect_worker" {
 
   environment {
     variables = {
-      TABLE_NAME = var.TABLE_NAME
+      TABLE_NAME = var.WS_TABLE_NAME
     }
   }
 }
@@ -211,7 +211,7 @@ resource "aws_lambda_function" "ws_after_connect_worker" {
 
   environment {
     variables = {
-      TABLE_NAME = var.TABLE_NAME
+      TABLE_NAME = var.WS_TABLE_NAME
     }
   }
 }
@@ -232,7 +232,7 @@ resource "aws_lambda_function" "ws_on_send_message_worker" {
 
   environment {
     variables = {
-      TABLE_NAME = var.TABLE_NAME
+      TABLE_NAME = var.WS_TABLE_NAME
     }
   }
 }
@@ -253,7 +253,7 @@ resource "aws_lambda_function" "ws_on_disconnect_worker" {
 
   environment {
     variables = {
-      TABLE_NAME = var.TABLE_NAME
+      TABLE_NAME = var.WS_TABLE_NAME
     }
   }
 }
@@ -477,4 +477,25 @@ resource "aws_apigatewayv2_stage" "subsetting_ws" {
 resource "aws_cloudwatch_log_group" "subsetting_ws" {
   name              = "/aws/apigateway/${aws_apigatewayv2_api.subsetting_ws.id}/${var.stage_name}"
   retention_in_days = 3
+}
+
+
+## Dynamo DB
+
+resource "aws_dynamodb_table" "ws_connection_table" {
+  name           = var.WS_TABLE_NAME
+  billing_mode   = "PROVISIONED"
+  read_capacity  = 20
+  write_capacity = 20
+  hash_key       = "connectionId"
+
+  attribute {
+    name = "connectionId"
+    type = "S"
+  }
+
+  tags = {
+    Name        = var.WS_TABLE_NAME
+    Environment = var.stage_name
+  }
 }
