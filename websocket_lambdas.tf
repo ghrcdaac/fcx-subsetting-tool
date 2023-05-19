@@ -360,6 +360,48 @@ resource "aws_apigatewayv2_route" "sendmessage" {
 
 
 
+## PERMISSIONS to trigger lamba from api gateway
+# add api gateway execution policy to the lambdas which are invoked by api gateway.
+
+resource "aws_lambda_permission" "ws_on_connect_worker" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ws_on_connect_worker.function_name
+  principal     = "apigateway.amazonaws.com"
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
+}
+
+resource "aws_lambda_permission" "ws_after_connect_worker" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ws_after_connect_worker.function_name
+  principal     = "apigateway.amazonaws.com"
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
+}
+
+resource "aws_lambda_permission" "ws_on_send_message_worker" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ws_on_send_message_worker.function_name
+  principal     = "apigateway.amazonaws.com"
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
+}
+
+resource "aws_lambda_permission" "ws_on_disconnect_worker" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ws_on_disconnect_worker.function_name
+  principal     = "apigateway.amazonaws.com"
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
+}
+
+
+
+
 ## Create deployment for subsetting_ws
 
 resource "aws_apigatewayv2_deployment" "subsetting_ws" {
