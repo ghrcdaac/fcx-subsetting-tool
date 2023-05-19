@@ -402,7 +402,6 @@ resource "aws_lambda_permission" "ws_after_connect_worker" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.ws_after_connect_worker.function_name
   principal     = "apigateway.amazonaws.com"
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
 }
 
@@ -411,7 +410,6 @@ resource "aws_lambda_permission" "ws_on_send_message_worker" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.ws_on_send_message_worker.function_name
   principal     = "apigateway.amazonaws.com"
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
 }
 
@@ -420,7 +418,6 @@ resource "aws_lambda_permission" "ws_on_disconnect_worker" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.ws_on_disconnect_worker.function_name
   principal     = "apigateway.amazonaws.com"
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_apigatewayv2_api.subsetting_ws.id}/*"
 }
 
