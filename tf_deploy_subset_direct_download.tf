@@ -106,7 +106,7 @@ resource "aws_lambda_function" "get_subsets_filename_worker" {
   environment {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
-      SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
+      SOURCE_BUCKET_NAME = var.DESTINATION_BUCKET_NAME
       CLOUD_FRONT_URL = var.CLOUD_FRONT_URL
     }
   }
