@@ -431,17 +431,17 @@ resource "aws_apigatewayv2_deployment" "subsetting_ws" {
   description = "deployment of websocket for subsetting progressbar"
 
   triggers = {
-    redeployment = sha1(join(",", tolist([
-      jsonencode(aws_apigatewayv2_integration.connect),
-      jsonencode(aws_apigatewayv2_integration.afterconnect),
-      jsonencode(aws_apigatewayv2_integration.sendmessage),
-      jsonencode(aws_apigatewayv2_integration.disconnect),
-      jsonencode(aws_apigatewayv2_route.default),
-      jsonencode(aws_apigatewayv2_route.connect),
-      jsonencode(aws_apigatewayv2_route.afterconnect),
-      jsonencode(aws_apigatewayv2_route.sendmessage),
-      jsonencode(aws_apigatewayv2_route.disconnect)
-    ])))
+    redeployment = sha1(jsonencode([
+      aws_apigatewayv2_integration.connect.id,
+      aws_apigatewayv2_integration.afterconnect.id,
+      aws_apigatewayv2_integration.sendmessage.id,
+      aws_apigatewayv2_integration.disconnect.id,
+      aws_apigatewayv2_route.default.id,
+      aws_apigatewayv2_route.connect.id,
+      aws_apigatewayv2_route.afterconnect.id,
+      aws_apigatewayv2_route.sendmessage.id,
+      aws_apigatewayv2_route.disconnect.id
+    ]))
   }
 
   lifecycle {
@@ -456,6 +456,7 @@ resource "aws_apigatewayv2_deployment" "subsetting_ws" {
 resource "aws_apigatewayv2_stage" "subsetting_ws" {
   api_id = aws_apigatewayv2_api.subsetting_ws.id
   name   = var.stage_name
+  auto_deploy = true
   default_route_settings {
     data_trace_enabled = true
     detailed_metrics_enabled = true
