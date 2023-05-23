@@ -5,5 +5,5 @@ variable "CLOUD_FRONT_URL" {
 
 variable "DESTINATION_BUCKET_NAME" {
   type    = string
-  default = "szg-ghrc-fcx-viz-output"
+  default = "ghrc-fcx-subset-output"
 }

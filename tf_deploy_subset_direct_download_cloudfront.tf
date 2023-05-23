@@ -1,7 +1,7 @@
 ## CREATE BUCKET for subsets output
 
 resource "aws_s3_bucket" "fcx_subset_output" {
-  bucket = "ghrc-fcx-subset-output"
+  bucket = var.DESTINATION_BUCKET_NAME
 
   tags = {
     Name = "fcx-subset-outputs"
