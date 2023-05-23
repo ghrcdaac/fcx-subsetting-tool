@@ -124,7 +124,7 @@ resource "aws_s3_bucket" "lambda_bucket" {
 data "archive_file" "lambda_CRS_subset_worker" {
   type = "zip"
 
-  source_dir  = "${path.module}/CRS_subsetting"
+  source_dir  = "${path.module}/src/CRS_subsetting"
   output_path = "${path.module}/dist/CRS_subsetting.zip"
 }
 
@@ -132,7 +132,7 @@ data "archive_file" "lambda_CRS_subset_worker" {
 data "archive_file" "lambda_FEGS_subset_worker" {
   type = "zip"
 
-  source_dir  = "${path.module}/FEGS_subsetting"
+  source_dir  = "${path.module}/src/FEGS_subsetting"
   output_path = "${path.module}/dist/FEGS_subsetting.zip"
 }
 
@@ -140,7 +140,7 @@ data "archive_file" "lambda_FEGS_subset_worker" {
 data "archive_file" "lambda_GLM_subset_worker" {
   type = "zip"
 
-  source_dir  = "${path.module}/GLM_subsetting"
+  source_dir  = "${path.module}/src/GLM_subsetting"
   output_path = "${path.module}/dist/GLM_subsetting.zip"
 }
 
@@ -148,7 +148,7 @@ data "archive_file" "lambda_GLM_subset_worker" {
 data "archive_file" "lambda_LIP_subset_worker" {
   type = "zip"
 
-  source_dir  = "${path.module}/LIP_subsetting"
+  source_dir  = "${path.module}/src/LIP_subsetting"
   output_path = "${path.module}/dist/LIP_subsetting.zip"
 }
 
@@ -156,7 +156,7 @@ data "archive_file" "lambda_LIP_subset_worker" {
 data "archive_file" "lambda_LIS_subset_worker" {
   type = "zip"
 
-  source_dir  = "${path.module}/LIS_subsetting"
+  source_dir  = "${path.module}/src/LIS_subsetting"
   output_path = "${path.module}/dist/LIS_subsetting.zip"
 }
 
@@ -164,7 +164,7 @@ data "archive_file" "lambda_LIS_subset_worker" {
 data "archive_file" "lambda_LMA_subset_worker" {
   type = "zip"
 
-  source_dir  = "${path.module}/LMA_subsetting"
+  source_dir  = "${path.module}/src/LMA_subsetting"
   output_path = "${path.module}/dist/LMA_subsetting.zip"
 }
 
@@ -172,7 +172,7 @@ data "archive_file" "lambda_LMA_subset_worker" {
 data "archive_file" "lambda_subset_trigger" {
   type = "zip"
 
-  source_dir  = "${path.module}/trigger_subsetting"
+  source_dir  = "${path.module}/src/trigger_subsetting"
   output_path = "${path.module}/dist/trigger_subsetting.zip"
 }
 
