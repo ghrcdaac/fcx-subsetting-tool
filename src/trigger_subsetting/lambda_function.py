@@ -10,10 +10,10 @@ def lambda_handler(event, context):
     Then it will invoke another AWS lambda function,
     along with necessary the payloads.
     """
-    # body = json.loads(event["body"]) #dictonary
-    body = event
+    body = json.loads(event["body"]) #dictonary
     payload = {}
     payloadStr = ""
+
 
     # DESERIALIZE DATA START
     validataionError = SubsetTriggerDeserializerSchema().validate(body)

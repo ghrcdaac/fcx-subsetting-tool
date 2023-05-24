@@ -150,6 +150,18 @@ resource "aws_api_gateway_method" "subsets_filename" {
   api_key_required = true # need api key
 }
 
+## allow CORS on preflight
+module "subsets_filename_api_cors" {
+  source = "squidfunk/api-gateway-enable-cors/aws"
+  version = "0.3.3"
+
+  api_id          = aws_api_gateway_rest_api.subset_trigger_api.id
+  api_resource_id = aws_api_gateway_resource.subsets_filename.id
+
+  depends_on = [ aws_api_gateway_rest_api.subset_trigger_api, aws_api_gateway_resource.subsets_filename ]
+}
+
+
 ## INTEGRATION OF GATEWAY AND LAMBDA TRIGGER
 
 resource "aws_api_gateway_integration" "subsets_filename_api_integration" {
@@ -157,7 +169,7 @@ resource "aws_api_gateway_integration" "subsets_filename_api_integration" {
   resource_id             = aws_api_gateway_resource.subsets_filename.id
   http_method             = aws_api_gateway_method.subsets_filename.http_method
   integration_http_method = aws_api_gateway_method.subsets_filename.http_method
-  type                    = "AWS"
+  type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.get_subsets_filename_worker.invoke_arn
 }
 
@@ -170,26 +182,7 @@ resource "aws_lambda_permission" "subsets_filename_lambda" {
   source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_api_gateway_rest_api.subset_trigger_api.id}/*/${aws_api_gateway_method.subsets_filename.http_method}${aws_api_gateway_resource.subsets_filename.path}"
 }
 
-## SET RESPONSE HANDLERS FOR API-GATEWAY
-
-# Success response handler
-resource "aws_api_gateway_method_response" "subsets_filename_api_response_200" {
-  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
-  resource_id = aws_api_gateway_resource.subsets_filename.id
-  http_method = aws_api_gateway_method.subsets_filename.http_method
-  status_code = "200"
-  depends_on = [ aws_api_gateway_rest_api.subset_trigger_api ]
-}
-
-# Integration response handler
-resource "aws_api_gateway_integration_response" "subsets_filename_api_IntegrationResponse" {
-  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
-  resource_id = aws_api_gateway_resource.subsets_filename.id
-  http_method = aws_api_gateway_method.subsets_filename.http_method
-  status_code = aws_api_gateway_method_response.subset_trigger_api_response_200.status_code
-  depends_on = [ aws_api_gateway_rest_api.subset_trigger_api ]
-}
-
+## SET RESPONSE HANDLERS FOR API-GATEWAY (NOT NEEDED FOR AWS PROXY INTEGRATION) HANDLE CORS HEADERS FROM LAMBDA RESPONSE ITSELF
 
 
 ## Create deployment for subsets_filename_api

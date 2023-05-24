@@ -546,6 +546,18 @@ resource "aws_api_gateway_method" "subset_trigger_api_method" {
   api_key_required = true # need api key
 }
 
+## allow CORS on preflight
+module "subset_trigger_api_cors" {
+  source = "squidfunk/api-gateway-enable-cors/aws"
+  version = "0.3.3"
+
+  api_id          = aws_api_gateway_rest_api.subset_trigger_api.id
+  api_resource_id = aws_api_gateway_resource.subset_trigger_api_resource.id
+
+  depends_on = [ aws_api_gateway_rest_api.subset_trigger_api, aws_api_gateway_resource.subset_trigger_api_resource ]
+}
+
+
 ## INTEGRATION OF GATEWAY AND LAMBDA TRIGGER
 
 resource "aws_api_gateway_integration" "subset_trigger_api_integration" {
@@ -553,7 +565,7 @@ resource "aws_api_gateway_integration" "subset_trigger_api_integration" {
   resource_id             = aws_api_gateway_resource.subset_trigger_api_resource.id
   http_method             = aws_api_gateway_method.subset_trigger_api_method.http_method
   integration_http_method = aws_api_gateway_method.subset_trigger_api_method.http_method
-  type                    = "AWS"
+  type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.subset_trigger.invoke_arn
 }
 
@@ -567,23 +579,8 @@ resource "aws_lambda_permission" "subset_trigger_api_gateway_lambda" {
   source_arn = "arn:aws:execute-api:${var.aws_region}:${var.accountId}:${aws_api_gateway_rest_api.subset_trigger_api.id}/*/${aws_api_gateway_method.subset_trigger_api_method.http_method}${aws_api_gateway_resource.subset_trigger_api_resource.path}"
 }
 
-## SET RESPONSE HANDLERS FOR API-GATEWAY
+## SET RESPONSE HANDLERS FOR API-GATEWAY (NOT NEEDED FOR AWS PROXY INTEGRATION) HANDLE CORS HEADERS FROM LAMBDA RESPONSE ITSELF
 
-# Success response handler
-resource "aws_api_gateway_method_response" "subset_trigger_api_response_200" {
-  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
-  resource_id = aws_api_gateway_resource.subset_trigger_api_resource.id
-  http_method = aws_api_gateway_method.subset_trigger_api_method.http_method
-  status_code = "200"
-}
-
-# Integration response handler
-resource "aws_api_gateway_integration_response" "subset_trigger_api_IntegrationResponse" {
-  rest_api_id = aws_api_gateway_rest_api.subset_trigger_api.id
-  resource_id = aws_api_gateway_resource.subset_trigger_api_resource.id
-  http_method = aws_api_gateway_method.subset_trigger_api_method.http_method
-  status_code = aws_api_gateway_method_response.subset_trigger_api_response_200.status_code
-}
 
 ## Create deployment for subset_trigger_api
 resource "aws_api_gateway_deployment" "subset_trigger_api_deployment" {

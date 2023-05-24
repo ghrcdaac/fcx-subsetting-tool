@@ -8,8 +8,8 @@ def lambda_handler(event, context):
     cloudfronturl = os.environ.get('CLOUD_FRONT_URL')
 
     if isinstance(event, str): event = json.loads(event)
-
-    subsettoken = event["wsTokenId"]
+    body = json.loads(event["body"]) #dictonary
+    subsettoken = body["wsTokenId"]
 
     s3 = boto3.resource('s3', region_name=AWSregion)
     bucket = s3.Bucket(srcbucket)
