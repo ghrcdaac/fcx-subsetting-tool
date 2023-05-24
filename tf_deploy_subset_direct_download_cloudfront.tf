@@ -2,6 +2,7 @@
 
 resource "aws_s3_bucket" "fcx_subset_output" {
   bucket = var.DESTINATION_BUCKET_NAME
+  force_destroy = true # enables terraform to force destroy bucket despite contents in it.
 
   tags = {
     Name = "fcx-subset-outputs"
