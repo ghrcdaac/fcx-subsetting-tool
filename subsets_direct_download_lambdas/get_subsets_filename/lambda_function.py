@@ -19,5 +19,10 @@ def lambda_handler(event, context):
             subset_files.append(f"{cloudfronturl}/{obj.key}")
     return {
         'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST,GET'
+        },
         'body': json.dumps({ "subsetfiles": subset_files })
     }
