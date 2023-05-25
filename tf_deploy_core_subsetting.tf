@@ -279,9 +279,11 @@ resource "aws_lambda_function" "CRS_Subset_Worker" {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
-      WS_URL = var.WS_URL
+      WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
   }
+
+  depends_on = [ aws_apigatewayv2_stage.subsetting_ws ]
 }
 
 # Lambda FEGS
@@ -312,9 +314,11 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
-      WS_URL = var.WS_URL
+      WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
   }
+
+  depends_on = [ aws_apigatewayv2_stage.subsetting_ws ]
 }
 
 # Lambda GLM
@@ -345,9 +349,11 @@ resource "aws_lambda_function" "GLM_Subset_Worker" {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
-      WS_URL = var.WS_URL
+      WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
   }
+
+  depends_on = [ aws_apigatewayv2_stage.subsetting_ws ]
 }
 
 # Lambda LIP
@@ -378,9 +384,11 @@ resource "aws_lambda_function" "LIP_Subset_Worker" {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
-      WS_URL = var.WS_URL
+      WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
   }
+
+  depends_on = [ aws_apigatewayv2_stage.subsetting_ws ]
 }
 
 # Lambda LIS
@@ -411,9 +419,11 @@ resource "aws_lambda_function" "LIS_Subset_Worker" {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
-      WS_URL = var.WS_URL
+      WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
   }
+
+  depends_on = [ aws_apigatewayv2_stage.subsetting_ws ]
 }
 
 # Lambda LMA
@@ -444,9 +454,11 @@ resource "aws_lambda_function" "LMA_Subset_Worker" {
     variables = {
       BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
-      WS_URL = var.WS_URL
+      WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
   }
+
+  depends_on = [ aws_apigatewayv2_stage.subsetting_ws ]
 }
 
 # Lambda TRIGGER
