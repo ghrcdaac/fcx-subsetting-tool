@@ -31,14 +31,6 @@ variable "SOURCE_BUCKET_NAME" {
   default = "fcx-raw-data"
 }
 
-variable "WS_URL" {
-  description = "WS URL needed for communication between subset-worker and frontend; for the progressbar "
-
-  type    = string
-  default = "wss://97cwyclmwd.execute-api.us-east-1.amazonaws.com/development"
-}
-
-
 ## variables for worker lambda configuration
 
 variable "lambda_execution_timeout" {
