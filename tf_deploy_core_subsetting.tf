@@ -647,17 +647,6 @@ resource "aws_api_gateway_usage_plan" "subset_trigger_api_usagePlan" {
     api_id = aws_api_gateway_rest_api.subset_trigger_api.id
     stage  = aws_api_gateway_stage.subset_trigger_api_stage.stage_name
   }
-
-  quota_settings {
-    limit  = 1000
-    offset = 1
-    period = "WEEK"
-  }
-
-  throttle_settings {
-    burst_limit = 100
-    rate_limit  = 1000
-  }
 }
 
 resource "aws_api_gateway_usage_plan_key" "usagePlan_with_key" {
