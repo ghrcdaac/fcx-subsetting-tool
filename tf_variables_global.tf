@@ -4,14 +4,12 @@ variable "aws_creds_path" {
   description = "The path to aws credentials file"
 
   type    = string
-  default = "/home/sanjog/.aws/credentials"
 }
 
 variable "aws_region" {
   description = "AWS region for all resources."
 
   type    = string
-  default = "us-east-1"
 }
 
 
@@ -83,7 +81,6 @@ variable "fcx-sst-marshmallow_json" {
 
 variable "accountId" {
   type    = string
-  default = "307493436926"
 }
 
 variable "stage_name" {
