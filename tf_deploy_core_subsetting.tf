@@ -277,7 +277,7 @@ resource "aws_lambda_function" "CRS_Subset_Worker" {
 
   environment {
     variables = {
-      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      BUCKET_AWS_REGION = var.aws_region
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
       WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
@@ -312,7 +312,7 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
 
   environment {
     variables = {
-      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      BUCKET_AWS_REGION = var.aws_region
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
       WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
@@ -347,7 +347,7 @@ resource "aws_lambda_function" "GLM_Subset_Worker" {
 
   environment {
     variables = {
-      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      BUCKET_AWS_REGION = var.aws_region
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
       WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
@@ -382,7 +382,7 @@ resource "aws_lambda_function" "LIP_Subset_Worker" {
 
   environment {
     variables = {
-      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      BUCKET_AWS_REGION = var.aws_region
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
       WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
@@ -417,7 +417,7 @@ resource "aws_lambda_function" "LIS_Subset_Worker" {
 
   environment {
     variables = {
-      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      BUCKET_AWS_REGION = var.aws_region
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
       WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }
@@ -452,7 +452,7 @@ resource "aws_lambda_function" "LMA_Subset_Worker" {
 
   environment {
     variables = {
-      BUCKET_AWS_REGION = var.BUCKET_AWS_REGION
+      BUCKET_AWS_REGION = var.aws_region
       SOURCE_BUCKET_NAME = var.SOURCE_BUCKET_NAME
       WS_URL = aws_apigatewayv2_stage.subsetting_ws.invoke_url
     }

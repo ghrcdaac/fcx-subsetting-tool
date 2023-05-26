@@ -17,13 +17,6 @@ variable "aws_region" {
 
 ## variables for worker lambdas code
 
-variable "BUCKET_AWS_REGION" {
-  description = "AWS regions for each subset-worker"
-
-  type    = string
-  default = "us-east-1"
-}
-
 variable "SOURCE_BUCKET_NAME" {
   description = "Bucket with raw data files required for the subset-worker"
 
