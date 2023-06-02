@@ -9,3 +9,4 @@ terraform.tfstate.backup
 terraform.tfvars
 node_modules/
 package-lock.json
+lambda_layers/*/python/
