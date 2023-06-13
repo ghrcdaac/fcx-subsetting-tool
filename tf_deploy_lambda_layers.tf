@@ -103,34 +103,34 @@ resource "aws_lambda_layer_version" "xarr_s3fs_h5ncf" {
 
 
 
-# ### LAMBDA LAYER :: xarr_scipy
+### LAMBDA LAYER :: xarr_scipy
 
-# # name for lambda layer object
-# variable "lambda_layer_xarr_scipy" {
-#   type    = string
-#   default = "xarr_scipy"
-# }
+# name for lambda layer object
+variable "lambda_layer_xarr_scipy" {
+  type    = string
+  default = "xarr_scipy"
+}
 
-# # zip the lambda code
-# data "archive_file" "lambda_xarr_scipy" {
-#   type = "zip"
-#   source_dir  = "${path.module}/lambda_layers/xarr_scipy"
-#   output_path = "${path.module}/dist/${var.lambda_layer_xarr_scipy}.zip"
-# }
+# zip the lambda code
+data "archive_file" "lambda_xarr_scipy" {
+  type = "zip"
+  source_dir  = "${path.module}/lambda_layers/xarr_scipy"
+  output_path = "${path.module}/dist/${var.lambda_layer_xarr_scipy}.zip"
+}
 
-# # upload the zipped lambda code to the s3 bucket created
-# resource "aws_s3_object" "lambda_xarr_scipy" {
-#   bucket = aws_s3_bucket.lambda_bucket.id
-#   key    = "${var.lambda_layer_xarr_scipy}.zip"
-#   source = data.archive_file.lambda_xarr_scipy.output_path
-#   etag = filemd5(data.archive_file.lambda_xarr_scipy.output_path)
-# }
+# upload the zipped lambda code to the s3 bucket created
+resource "aws_s3_object" "lambda_xarr_scipy" {
+  bucket = aws_s3_bucket.lambda_bucket.id
+  key    = "${var.lambda_layer_xarr_scipy}.zip"
+  source = data.archive_file.lambda_xarr_scipy.output_path
+  etag = filemd5(data.archive_file.lambda_xarr_scipy.output_path)
+}
 
-# # create layer
-# resource "aws_lambda_layer_version" "xarr_scipy" {
-#   layer_name = "fcx-${var.lambda_layer_xarr_scipy}"
-#   s3_bucket = aws_s3_bucket.lambda_bucket.id
-#   s3_key = aws_s3_object.lambda_xarr_scipy.key
-#   compatible_runtimes = ["python3.8"]
-#   source_code_hash = data.archive_file.lambda_xarr_scipy.output_base64sha256
-# }
+# create layer
+resource "aws_lambda_layer_version" "xarr_scipy" {
+  layer_name = "fcx-${var.lambda_layer_xarr_scipy}"
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key = aws_s3_object.lambda_xarr_scipy.key
+  compatible_runtimes = ["python3.8"]
+  source_code_hash = data.archive_file.lambda_xarr_scipy.output_base64sha256
+}

@@ -45,38 +45,6 @@ variable "lambda_execution_ephimeral_storage" {
   default = 5120
 }
 
-
-## variables for layers arns requried by lambda functions
-
-variable "XarrS3fsH5ncf" {
-  description = "includes xarray, h5.py and s3fs"
-
-  type    = string
-  default = "arn:aws:lambda:us-east-1:307493436926:layer:XarrS3fsH5ncf:1"
-}
-
-variable "XarrScipy" {
-  description = "includes xarray and scipy"
-
-  type    = string
-  default = "arn:aws:lambda:us-east-1:307493436926:layer:XarrScipy:1"
-}
-
-variable "websocket-client" {
-  description = "includes websocket-client package"
-
-  type    = string
-  default = "arn:aws:lambda:us-east-1:307493436926:layer:websocket-client:2"
-}
-
-variable "fcx-sst-marshmallow_json" {
-  description = "includes marshmallow_json package"
-
-  type    = string
-  default = "arn:aws:lambda:us-east-1:307493436926:layer:fcx-sst-marshmallow_json:3"
-}
-
-
 ## variables needed for API GATEWAYS
 
 variable "accountId" {

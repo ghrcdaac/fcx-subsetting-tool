@@ -265,9 +265,7 @@ resource "aws_lambda_function" "CRS_Subset_Worker" {
 
   role = aws_iam_role.lambda_exec.arn
 
-  ## TODO: Create layers first, then use their arn.
-  layers = [var.XarrScipy, var.websocket-client]
-  # layers = [aws_lambda_layer_version.xarr_scipy.arn, aws_lambda_layer_version.ws_client.arn]
+  layers = [aws_lambda_layer_version.xarr_scipy.arn, aws_lambda_layer_version.ws_client.arn]
 
   memory_size = var.lambda_execution_memory
   timeout = var.lambda_execution_timeout
@@ -284,8 +282,7 @@ resource "aws_lambda_function" "CRS_Subset_Worker" {
     }
   }
 
-  depends_on = [ aws_apigatewayv2_stage.subsetting_ws ]
-  # depends_on = [ aws_apigatewayv2_stage.subsetting_ws, aws_lambda_layer_version.xarr_scipy, aws_lambda_layer_version.ws_client ]
+  depends_on = [ aws_apigatewayv2_stage.subsetting_ws, aws_lambda_layer_version.xarr_scipy, aws_lambda_layer_version.ws_client ]
 }
 
 # Lambda FEGS
@@ -302,9 +299,7 @@ resource "aws_lambda_function" "FEGS_Subset_Worker" {
 
   role = aws_iam_role.lambda_exec.arn
 
-  ## TODO: Create layers first, then use their arn.
-  layers = [var.XarrS3fsH5ncf, var.websocket-client]
-  # layers = [aws_lambda_layer_version.xarr_s3fs_h5ncf.arn, aws_lambda_layer_version.ws_client.arn]
+  layers = [aws_lambda_layer_version.xarr_s3fs_h5ncf.arn, aws_lambda_layer_version.ws_client.arn]
 
   memory_size = var.lambda_execution_memory
   timeout = var.lambda_execution_timeout
@@ -442,9 +437,7 @@ resource "aws_lambda_function" "LMA_Subset_Worker" {
 
   role = aws_iam_role.lambda_exec.arn
 
-  ## TODO: Create layers first, then use their arn.
-  layers = [var.XarrS3fsH5ncf, var.websocket-client]
-  # layers = [aws_lambda_layer_version.xarr_s3fs_h5ncf.arn, aws_lambda_layer_version.ws_client.arn]
+  layers = [aws_lambda_layer_version.xarr_s3fs_h5ncf.arn, aws_lambda_layer_version.ws_client.arn]
 
   memory_size = var.lambda_execution_memory
   timeout = var.lambda_execution_timeout
