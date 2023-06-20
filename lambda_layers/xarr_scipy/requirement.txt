@@ -1,0 +1,5 @@
+xarray
+scipy
+numpy
+pandas
+fsspec
