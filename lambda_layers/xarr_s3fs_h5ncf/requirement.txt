@@ -1,0 +1,7 @@
+xarray
+s3fs
+h5netcdf
+h5py
+numpy
+pandas
+fsspec

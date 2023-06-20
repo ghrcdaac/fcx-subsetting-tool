@@ -1,39 +1,42 @@
-## How to deploy the lambda function (in the AWS lambda)
-### It is supposed that the user has some prior knowledge about lambda.
-1. clone the subsetting tool from github
-2. run `build.sh`
-3. inside the `/dist` dir, zips will be created for each subsetting type and the trigger.
-4. For each zip files, create a lambda function.
-5. upload each zip files into their appropriate lambdas.
-6. The dependencies for the subsetting code is already available as layer.
-   - add `fcx-sst-marshmallow_json` layer to the trigger_subsetting lambda.
-   - add `XarrScipy` layer for the CRS type lambda.
-   - add `XarrS3fsH5ncf` layer for rest.
-7. Each of the code (except trigger_subsetting) needs env variables (i.e. to state the region of the i/p and its region). So add them to each lambda. (Most possibly same env variables for all lambdas.)
-   - `SOURCE_BUCKET_NAME`
-   - `BUCKET_AWS_REGION`
-8. Also, Each of the code (except trigger_subsetting), needs permission to read and write to S3.
-   - Either create your own permission, Or add `sanjog-subsetting-fcx-role-ikmiflyf` permission to each lambda.
-9. And, For each of the lambda function (except trigger_subsetting), change their general setting. i.e. Example configuration:
-   - Memory: 1024MB 
-   - Ephemeral storage: 5120MB
-   - Timeout: 10min
-10. The `trigger_subsetting` should have an API gateway as an trigger, so add one.
-      - In the API gateway console, Allow CORS for resource, and re-deploy the API gateway.
-11. For the expected POST API call, refer. postman collection attached `subsettingTool.postman_collection.json`.
+# Steps to deploy the Subsetting Tool
+
+It is supposed that the user has some prior knowledge about aws.
+
+## Pre-requisites
 
 
-## To test the subsetting in lambda
-1. Use the postman collection `subsettingTool.postman_collection.json` as a reference to trigger the lambda.
-2. The output will be in the `subDir` mentioned in the post request body.
+- [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+- [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
+- [Setup AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+  - `aws configure` Preferred. This deployment will assume that aws configure is used.
+  - Need ```aws_access_key_id and aws_secret_access_key``` key values; inside `~/.aws/credentials`
 
+## Deployement Details
 
-## To test the subsetting script locally:
-1. clone the subsetting tool from github
-2. Create a env (using conda or pyenv) and then install dependencies using `requirements.txt`
-3. Add `__init__.py` in each subsetting dir.
-   - Example: inside `CRS_subsetting` dir, make a new file named `__init__.py`
-   - It will make `CRS_subsetting` as a package; and let it import in the main trigger script.
-4. Import each subsetting inside the `lambda_function` of the `trigger_subsetting`, and invoke them (instead of lambda `client.invoke`)
-5. Uncomment the `lambda_handler()` function call in the `lambda_function.py` for each subsetting.
-6. Run `bash start.sh`
+1. Export env variables for keys mentioned in .env.example into shell session.
+     - example: `export TF_VAR_aws_creds_path="**********" TF_VAR_aws_region="**********" TF_VAR_accountId="**********"`
+2. Deploy using `bash deploy.sh`. The bash script does the following things:
+      - terraform init
+      - terrafrom plan
+      - terraform apply
+3. Use the `subsettingTool.postman_collection.json` postman collection to test.
+
+After terraform finishes building the Subsetting tool infrastructure, it outputs env varaibles that can be used in the frontend.
+
+   - For `<sensitive>` as output value, use `terraform output <key_name>`
+
+### To remove the Subsetting Tool
+
+- Use `terraform destroy`
+
+### Details on Subsetting tool
+
+The subsetting tool has 3 parts:
+
+1. <b>Core subsetting tool</b>: This part deals with subsetting the actual instrument values. It uses multiple subsetting lambda workers for different instruments. Raw data is pulled first from s3 SOURCE_BUCKET, processed and is finally stored in DESTINATION_BUCKET (SUBSET_OUTPUT_BUCKET)
+
+2. <b>Progress bar</b>: This part deals with setting up two way communication between frontend and subset workers using Websockets. It uses Websocket IDs to differentiate connections uniquely in a serverless architecture. Dynamodb is used.
+
+3. <b>Subsets direct download</b>: This part deals with exposing the privately stored subsets and making it directly downloadable using the CDN (Cloudfront).
+
+The codebase is segregated based on the above mentioned parts.

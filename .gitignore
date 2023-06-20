@@ -3,3 +3,10 @@ __pycache__/
 data/subsets/
 data/raw/
 dist/
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
+node_modules/
+package-lock.json
+# lambda_layers/*/python/
