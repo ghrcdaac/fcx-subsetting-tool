@@ -4,6 +4,7 @@ variable "aws_creds_path" {
   description = "The path to aws credentials file"
 
   type    = string
+  default = "~/.aws/credentials"
 }
 
 variable "aws_region" {

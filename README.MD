@@ -14,7 +14,7 @@ It is supposed that the user has some prior knowledge about aws.
 ## Deployement Details
 
 1. Export env variables for keys mentioned in .env.example into shell session.
-     - example: `export TF_VAR_aws_creds_path="**********" TF_VAR_aws_region="**********" TF_VAR_accountId="**********"`
+     - example: `export TF_VAR_aws_region="**********" TF_VAR_accountId="**********"`
 2. Deploy using `bash deploy.sh`. The bash script does the following things:
       - terraform init
       - terrafrom plan
