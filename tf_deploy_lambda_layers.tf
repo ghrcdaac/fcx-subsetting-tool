@@ -3,22 +3,22 @@
 # name for lambda layer object
 variable "lambda_layer_ws_client" {
   type    = string
-  default = "websocket-client"
+  default = "websocket_client"
 }
 
-# zip the lambda code
-data "archive_file" "lambda_ws_client" {
-  type = "zip"
-  source_dir  = "${path.module}/lambda_layers/websocket_client"
-  output_path = "${path.module}/dist/${var.lambda_layer_ws_client}.zip"
-}
+# # zip the lambda code
+# data "archive_file" "lambda_ws_client" {
+#   type = "zip"
+#   source_dir  = "${path.module}/lambda_layers/websocket_client"
+#   output_path = "${path.module}/dist/${var.lambda_layer_ws_client}.zip"
+# }
 
 # upload the zipped lambda code to the s3 bucket created
 resource "aws_s3_object" "lambda_ws_client" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "${var.lambda_layer_ws_client}.zip"
-  source = data.archive_file.lambda_ws_client.output_path
-  etag = filemd5(data.archive_file.lambda_ws_client.output_path)
+  source = "${path.module}/lambda_layers/${var.lambda_layer_ws_client}/${var.lambda_layer_ws_client}.zip"
+  etag = filemd5("${path.module}/lambda_layers/${var.lambda_layer_ws_client}/${var.lambda_layer_ws_client}.zip")
 }
 
 # create layer
@@ -41,19 +41,19 @@ variable "lambda_layer_marshmallow_json" {
   default = "marshmallow_json"
 }
 
-# zip the lambda code
-data "archive_file" "lambda_marshmallow_json" {
-  type = "zip"
-  source_dir  = "${path.module}/lambda_layers/marshmallow_json"
-  output_path = "${path.module}/dist/${var.lambda_layer_marshmallow_json}.zip"
-}
+# # zip the lambda code
+# data "archive_file" "lambda_marshmallow_json" {
+#   type = "zip"
+#   source_dir  = "${path.module}/lambda_layers/marshmallow_json"
+#   output_path = "${path.module}/dist/${var.lambda_layer_marshmallow_json}.zip"
+# }
 
 # upload the zipped lambda code to the s3 bucket created
 resource "aws_s3_object" "lambda_marshmallow_json" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "${var.lambda_layer_marshmallow_json}.zip"
-  source = data.archive_file.lambda_marshmallow_json.output_path
-  etag = filemd5(data.archive_file.lambda_marshmallow_json.output_path)
+  source = "${path.module}/lambda_layers/${var.lambda_layer_marshmallow_json}/${var.lambda_layer_marshmallow_json}.zip"
+  etag = filemd5("${path.module}/lambda_layers/${var.lambda_layer_marshmallow_json}/${var.lambda_layer_marshmallow_json}.zip")
 }
 
 # create layer
@@ -76,19 +76,19 @@ variable "lambda_layer_xarr_s3fs_h5ncf" {
   default = "xarr_s3fs_h5ncf"
 }
 
-# zip the lambda code
-data "archive_file" "lambda_xarr_s3fs_h5ncf" {
-  type = "zip"
-  source_dir  = "${path.module}/lambda_layers/xarr_s3fs_h5ncf"
-  output_path = "${path.module}/dist/${var.lambda_layer_xarr_s3fs_h5ncf}.zip"
-}
+# # zip the lambda code
+# data "archive_file" "lambda_xarr_s3fs_h5ncf" {
+#   type = "zip"
+#   source_dir  = "${path.module}/lambda_layers/xarr_s3fs_h5ncf"
+#   output_path = "${path.module}/dist/${var.lambda_layer_xarr_s3fs_h5ncf}.zip"
+# }
 
 # upload the zipped lambda code to the s3 bucket created
 resource "aws_s3_object" "lambda_xarr_s3fs_h5ncf" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "${var.lambda_layer_xarr_s3fs_h5ncf}.zip"
-  source = data.archive_file.lambda_xarr_s3fs_h5ncf.output_path
-  etag = filemd5(data.archive_file.lambda_xarr_s3fs_h5ncf.output_path)
+  source = "${path.module}/lambda_layers/${var.lambda_layer_xarr_s3fs_h5ncf}/${var.lambda_layer_xarr_s3fs_h5ncf}.zip"
+  etag = filemd5("${path.module}/lambda_layers/${var.lambda_layer_xarr_s3fs_h5ncf}/${var.lambda_layer_xarr_s3fs_h5ncf}.zip")
 }
 
 # create layer
@@ -111,18 +111,18 @@ variable "lambda_layer_xarr_scipy" {
   default = "xarr_scipy"
 }
 
-# zip the lambda code
-data "archive_file" "lambda_xarr_scipy" {
-  type = "zip"
-  source_dir  = "${path.module}/lambda_layers/xarr_scipy"
-  output_path = "${path.module}/dist/${var.lambda_layer_xarr_scipy}.zip"
-}
+# # zip the lambda code
+# data "archive_file" "lambda_xarr_scipy" {
+#   type = "zip"
+#   source_dir  = "${path.module}/lambda_layers/xarr_scipy"
+#   output_path = "${path.module}/dist/${var.lambda_layer_xarr_scipy}.zip"
+# }
 
 # upload the zipped lambda code to the s3 bucket created
 resource "aws_s3_object" "lambda_xarr_scipy" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "${var.lambda_layer_xarr_scipy}.zip"
-  source = data.archive_file.lambda_xarr_scipy.output_path
+  source = "${path.module}/lambda_layers/${var.lambda_layer_xarr_scipy}/${var.lambda_layer_xarr_scipy}.zip"
   etag = filemd5(data.archive_file.lambda_xarr_scipy.output_path)
 }
 
