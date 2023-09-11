@@ -107,11 +107,11 @@ resource "aws_lambda_function" "get_subsets_filename_worker" {
     variables = {
       BUCKET_AWS_REGION = var.aws_region
       SOURCE_BUCKET_NAME = var.DESTINATION_BUCKET_NAME
-      CLOUD_FRONT_URL = "https://${aws_cloudfront_distribution.fcx_subset_output_distribution.domain_name}"
+      # CLOUD_FRONT_URL = "https://${aws_cloudfront_distribution.fcx_subset_output_distribution.domain_name}"
     }
   }
 
-  depends_on = [ aws_cloudfront_distribution.fcx_subset_output_distribution ]
+  # depends_on = [ aws_cloudfront_distribution.fcx_subset_output_distribution ]
 }
 
 

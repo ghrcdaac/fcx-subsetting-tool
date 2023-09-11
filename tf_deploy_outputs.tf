@@ -35,8 +35,8 @@ output "SUBSET_OUTPUT_BUCKET_REGION" {
   value = "${aws_s3_bucket.fcx_subset_output.region}"
 }
 
-output "SUBSET_CLOUDFRONT_URL" {
-  description = "Cloudfront URL to subset output. Use cloudfront url + path to bucket object to get/download the subset objects"
+# output "SUBSET_CLOUDFRONT_URL" {
+#   description = "Cloudfront URL to subset output. Use cloudfront url + path to bucket object to get/download the subset objects"
 
-  value = "https://${aws_cloudfront_distribution.fcx_subset_output_distribution.domain_name}"
-}
+#   value = "https://${aws_cloudfront_distribution.fcx_subset_output_distribution.domain_name}"
+# }
