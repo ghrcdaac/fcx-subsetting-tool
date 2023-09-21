@@ -668,3 +668,55 @@ resource "aws_api_gateway_method_settings" "subset_trigger_api_method" {
     logging_level   = "INFO"
   }
 }
+
+## Add role to allow API Gateway to write logs
+
+# create role
+resource "aws_iam_role" "cloudwatch" {
+  name = "api_gateway_cloudwatch_global"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# create policy
+data "aws_iam_policy_document" "cloudwatch" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents",
+      "logs:GetLogEvents",
+      "logs:FilterLogEvents",
+    ]
+
+    resources = ["*"]
+  }
+}
+
+# add policy to role
+resource "aws_iam_role_policy" "cloudwatch" {
+  name   = "cloudwatch_logs_default_policy"
+  role   = aws_iam_role.cloudwatch.id
+  policy = data.aws_iam_policy_document.cloudwatch.json
+}
+
+# Add role in API Gateway Account Settigns
+resource "aws_api_gateway_account" "apigateway_cloudwatch_role" {
+  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+}
